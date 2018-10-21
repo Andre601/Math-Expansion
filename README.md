@@ -8,3 +8,4 @@ Supported math is addition (+), substraction (-), multiplication (*) and dividin
 
 ## Credits
 Math-expansion uses [EvalEx](https://github.com/uklimaschewski/EvalEx) for evaluating the math-expressions.
+Check the repository for available math-expressions.
