@@ -17,7 +17,7 @@ Supported are all kinds of placeholders, that return a number.
 You need to use `{}` instead of the default `%` to tell the expansion, what the placeholder is.
 
 ### `%math_sqrt(100)%`
-This will return the squared number of the given result (In this case `10` because `10*10=100`).  
+This will return the square root of the given number (In this case `10` because `10*10=100`).  
 Placeholders can (of course) be used here too.
 
 ## Known issues
