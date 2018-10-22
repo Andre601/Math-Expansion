@@ -20,9 +20,9 @@ You need to use `{}` instead of the default `%` to tell the expansion, what the 
 This will return the square root of the given number (In this case `10` because `10*10=100`).  
 Placeholders can (of course) be used here too.
 
-## Known issues
-- You can't use `%` inside of calculations, to use a percentage. This is due to how PlaceholderAPI handles placeholders.  
-There is no fix for that atm.
+### `%math_22[prc]4%`
+`[prc]` is a replacement of what normally is `%`, because of how PlaceholderAPI handles placeholders.
+The above calculation returns the remainder of `22` (what is left after removing `4` x times, when possible), which would be `2`.
 
 ## Credits
 Math-expansion uses [EvalEx](https://github.com/uklimaschewski/EvalEx) for evaluating the math-expressions.  

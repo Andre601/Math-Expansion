@@ -41,6 +41,8 @@ public class MathExpansion extends PlaceholderExpansion{
 
         // We first replace any appearance of {placeholder} with the right value
         identifier = PlaceholderAPI.setBracketPlaceholders(player, identifier);
+        identifier = identifier.replace("[prc]", "%");
+
         BigDecimal result;
         try {
             // We try to evaluate the provided String. If it fails, we return a invalid value-response
