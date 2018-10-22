@@ -21,7 +21,7 @@ This will return the square root of the given number (In this case `10` because 
 Placeholders can (of course) be used here too.
 
 ### `%math_22[prc]4%`
-`[prc]` is a replacement of what normally is `%`, because of how PlaceholderAPI handles placeholders.
+`[prc]` is a replacement of what normally is `%`, because of how PlaceholderAPI handles placeholders.  
 The above calculation returns the remainder of `22` (what is left after removing `4` x times, when possible), which would be `2`.
 
 ## Credits
