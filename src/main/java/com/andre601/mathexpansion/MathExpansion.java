@@ -42,7 +42,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     /*
      * We generate and load our default settings here.
      *
-     * Precision is how many digits after the . should be shown
+     * Precision is how many numbers after the . should be shown
      * Debug enables/disables printing of the StackTrace, if an invalid calculation was made.
      */
     @Override
