@@ -28,7 +28,7 @@ The above calculation returns the remainder of `22` (what is left after removing
 On first start does the expansion create two config-options in the config.yml of PlaceholderAPI (Since v.1.0.4)  
 Those two options are `Precision` and `Debug`.
 
-`Precision` sets, how many numbers after the `.` are shown (example: `3` would shorthe `5.868741` to `5.869`)  
+`Precision` sets, how many numbers after the `.` are shown (example: `3` would shorten `5.868741` to `5.869`)  
 `Debug` enables/disables printing of the stacktrace in the console, if a invalid calculation was made (default is `off`)
 
 ## Credits
