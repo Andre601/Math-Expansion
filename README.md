@@ -34,3 +34,8 @@ Those two options are `Precision` and `Debug`.
 ## Credits
 Math-expansion uses [EvalEx](https://github.com/uklimaschewski/EvalEx) for evaluating the math-expressions.  
 Check the repository for available math-expressions.
+
+## Links
+- [Math expansion on the ecloud](https://api.extendedclip.com/expansions/math/)
+- [Placeholders (it's just one but meh...](https://github.com/help-chat/PlaceholderAPI/wiki/Placeholders#math)
+- [License](https://github.com/PlaceholderAPI/Math-Expansion/blob/master/LICENSE)
