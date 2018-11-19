@@ -25,9 +25,9 @@ Placeholders can (of course) be used here too.
 The above calculation returns the remainder of `22` (what is left after removing `4` x times, when possible), which would be `2`.
 
 ### `%math_5.6+4.77[precision:1]%`
-This example shows the `[precision:<number>]` in action.
-It lets you limit/increase the amount of digits after the `.` to a specified one.
-This is kinda like an override, since it will show a different number, compared to the one set in the config.
+This example shows the `[precision:<number>]` in action.  
+It lets you limit/increase the amount of digits after the `.` to a specified one.  
+This is kinda like an override, since it will show a different number, compared to the one set in the config.  
 Our example above will show `10.4` even if for example, the config-option is set to 2 (which would return `10.37`).
 
 ## Config options
