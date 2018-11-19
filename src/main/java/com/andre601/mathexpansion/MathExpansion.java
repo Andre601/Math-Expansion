@@ -9,11 +9,15 @@ import org.bukkit.OfflinePlayer;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MathExpansion extends PlaceholderExpansion implements Configurable {
 
     // We get the version from the package (or something like that)
     private final String VERSION = getClass().getPackage().getImplementationVersion();
+
+    private final Pattern SETTINGS_PATTERN = Pattern.compile("\\[(?<precision>[a-zA-Z0-9:]+)]");
 
     // We don't have any dependencies to worry about so it's always true
     @Override
@@ -69,6 +73,44 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         identifier = PlaceholderAPI.setBracketPlaceholders(player, identifier);
         identifier = identifier.replace("[prc]", "%");
 
+        /*
+         * We setup a matcher, that checks for any appearance of [something]
+         */
+        Matcher matcher = SETTINGS_PATTERN.matcher(identifier);
+
+        /*
+         * We first set a integer with value -1, that will be used later.
+         * We then check, if the matcher has found something and if yes, we split that result at : as a String[]
+         * That String[] will be checked, if it's bigger or equal to 2 (if it found at least 2 Strings, afzer splitting
+         * at the :)
+         * When it finds something, we will check, if the first String (before the first :) is called "precision"
+         * and if it is the case, then we will try to get an integer out of the second String (after the :) and if
+         * that fails, we return a message about an wrong argument.
+         */
+        int precision = -1;
+        if(matcher.find()){
+            String[] results = matcher.group("precision").split(":");
+
+            if(results.length >= 2){
+                if(results[0].equalsIgnoreCase("precision")){
+                    try {
+                        precision = Integer.valueOf(results[1]);
+                        identifier = identifier.replace("[" + matcher.group("precision") + "]", "");
+                    }catch(Exception ex){
+                        identifier = "The value in the option \"Precision\" was invalid! Make sure it's a number!";
+
+                        if(this.getString("Debug", "off").equalsIgnoreCase("on"))
+                            ex.printStackTrace();
+
+                        return identifier;
+                    }
+                }else{
+                    identifier = "Invalid option-type \"" + matcher.group("precision") + "\"!";
+                    return identifier;
+                }
+            }
+        }
+
         BigDecimal result;
         try {
             /*
@@ -76,19 +118,23 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
              * as a BigDecimal.
              *
              * We use setScale, to reduce the amount of numbers after the . to the one provided in the config
-             * (PlaceholderAPI/config.yml)
+             * (PlaceholderAPI/config.yml), unless there is a [precision:<number>] placeholder within the identifier
+             * itself (precision is not -1)
              *
              * BigDecimal.ROUND_HALF_UP is basically the same, like you've learned in school about rounding
              * (0-4 = rounding down, 5-9 = rounding up)
              */
             Expression expression = new Expression(identifier);
-            result = expression.eval().setScale(this.getInt("Precision", 3), BigDecimal.ROUND_HALF_UP);
+            result = expression.eval().setScale(
+                    precision == -1 ? this.getInt("Precision", 3) : precision,
+                    BigDecimal.ROUND_HALF_UP
+            );
         }catch (Exception ex){
             // If debug is set to "on", we print the StackTrace on an error.
             if(this.getString("Debug", "off").equalsIgnoreCase("on"))
                 ex.printStackTrace();
 
-            identifier = "The provided value was invalid!";
+            identifier = "The provided value was invalid! Reason: " + ex.getMessage();
             return identifier;
         }
 
