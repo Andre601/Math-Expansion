@@ -14,40 +14,52 @@ import java.util.regex.Pattern;
 
 public class MathExpansion extends PlaceholderExpansion implements Configurable {
 
-    // We get the version from the package (or something like that)
-    private final String VERSION = getClass().getPackage().getImplementationVersion();
-
     private final Pattern SETTINGS_PATTERN = Pattern.compile("\\[(?<precision>[a-zA-Z0-9:]+)]");
 
-    // We don't have any dependencies to worry about so it's always true
+    /**
+     * Gives back if the plugin can be registered or not.
+     *
+     * @return Always {@code true} since we do not have a plugin as dependency.
+     */
     @Override
     public boolean canRegister(){
         return true;
     }
 
-    // %math_<math expression>%
+    /**
+     * Gives the String that is used in %placeholder%.
+     *
+     * @return A {@link java.lang.String String} called "math".
+     */
     @Override
     public String getIdentifier() {
         return "math";
     }
 
-    // *Feels proud man*
+    /**
+     * Gives the name of the author.
+     *
+     * @return A {@link java.lang.String String} called "Andre_601".
+     */
     @Override
     public String getAuthor() {
         return "Andre_601";
     }
 
-    // Just the version
+    /**
+     * Gives the version of the expansion.
+     *
+     * @return A {@link java.lang.String String} with the current version.
+     */
     @Override
     public String getVersion() {
-        return VERSION;
+        return "1.0.7";
     }
 
-    /*
-     * We generate and load our default settings here.
+    /**
+     * Sets/Loads the default settings in the config.yml of PlaceholderAPI.
      *
-     * Precision is how many numbers after the . should be shown
-     * Debug enables/disables printing of the StackTrace, if an invalid calculation was made.
+     * @return A {@link java.util.HashMap HashMap<String, Object>} with the default settings for this expansion.
      */
     @Override
     public Map<String, Object> getDefaults(){
@@ -59,9 +71,15 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         return defaults;
     }
 
-    /*
-     * This is, where the actual requests will happen.
-     * We use OfflinePlayer instead of Player, because a player isn't a requirement for our expansion here
+    /**
+     * Will be executed, when a placeholder with our {@link #getIdentifier() identifier} is used.
+     *
+     * @param  player
+     *         A {@link org.bukkit.OfflinePlayer OfflinePlayer}.
+     * @param  identifier
+     *         A {@link java.lang.String String}.
+     *
+     * @return A String, depending on certain conditions.
      */
     public String onRequest(OfflinePlayer player, String identifier){
 
@@ -81,7 +99,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         /*
          * We first set a integer with value -1, that will be used later.
          * We then check, if the matcher has found something and if yes, we split that result at : as a String[]
-         * That String[] will be checked, if it's bigger or equal to 2 (if it found at least 2 Strings, afzer splitting
+         * That String[] will be checked, if it's bigger or equal to 2 (if it found at least 2 Strings, after splitting
          * at the :)
          * When it finds something, we will check, if the first String (before the first :) is called "precision"
          * and if it is the case, then we will try to get an integer out of the second String (after the :) and if
@@ -134,7 +152,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
             if(this.getString("Debug", "off").equalsIgnoreCase("on"))
                 ex.printStackTrace();
 
-            identifier = "The provided value was invalid! Reason: " + ex.getMessage();
+            identifier = "The provided value was invalid!\nReason: " + ex.getMessage();
             return identifier;
         }
 
