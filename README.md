@@ -16,9 +16,9 @@ This shows the current amount of online players, minus 1.
 Supported are all kinds of placeholders, that return a number.  
 You need to use `{}` instead of the default `%` to tell the expansion, what the placeholder is.
 
-### `%math_sqrt(100)%`
+### `%math_SQRT(100)%`
 This will return the square root of the given number (In this case `10` because `10*10=100`).  
-Placeholders can (of course) be used here too.
+The placeholder `SQRT` is case-sensitive (can't be lowercase).
 
 ### `%math_22[prc]4%`
 `[prc]` is a replacement of what normally is `%`, because of how PlaceholderAPI handles placeholders.  
