@@ -19,7 +19,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     /**
      * Gives back if the plugin can be registered or not.
      *
-     * @return Always {@code true} since we do not have a plugin as dependency.
+     * @return Always {@code true} since we do not have any dependencies.
      */
     @Override
     public boolean canRegister(){
@@ -27,7 +27,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     }
 
     /**
-     * Gives the String that is used in %placeholder%.
+     * Gives the String that is used in %identifier_value%.
      *
      * @return A {@link java.lang.String String} called "math".
      */
@@ -60,6 +60,8 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
      * Sets/Loads the default settings in the config.yml of PlaceholderAPI.
      *
      * @return A {@link java.util.HashMap HashMap<String, Object>} with the default settings for this expansion.
+     *
+     * @since 1.0.4
      */
     @Override
     public Map<String, Object> getDefaults(){
