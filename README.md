@@ -46,3 +46,4 @@ Check the repository for available math-expressions.
 * [1.0.3](https://api.extendedclip.com/expansions/math/versions/math-103) Added `[prc]` for the `%` symbol.
 * [1.0.4](https://api.extendedclip.com/expansions/math/versions/math-104) Added config-options `precision` and `debug`.
 * [1.0.6](https://api.extendedclip.com/expansions/math/versions/math-106) Added `[precision:<number>]` option.
+* [1.0.7](https://api.extendedclip.com/expansions/math/versions/math-107) Fixed version number being `null`.
