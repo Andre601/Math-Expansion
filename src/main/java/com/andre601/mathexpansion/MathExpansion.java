@@ -16,53 +16,26 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
 
     private final Pattern SETTINGS_PATTERN = Pattern.compile("\\[(?<precision>[a-zA-Z0-9:]+)]");
 
-    /**
-     * Gives back if the plugin can be registered or not.
-     *
-     * @return Always {@code true} since we do not have any dependencies.
-     */
     @Override
     public boolean canRegister(){
         return true;
     }
 
-    /**
-     * Gives the String that is used in %identifier_value%.
-     *
-     * @return A {@link java.lang.String String} called "math".
-     */
     @Override
     public String getIdentifier() {
         return "math";
     }
 
-    /**
-     * Gives the name of the author.
-     *
-     * @return A {@link java.lang.String String} called "Andre_601".
-     */
     @Override
     public String getAuthor() {
         return "Andre_601";
     }
 
-    /**
-     * Gives the version of the expansion.
-     *
-     * @return A {@link java.lang.String String} with the current version.
-     */
     @Override
     public String getVersion() {
         return "1.0.7";
     }
 
-    /**
-     * Sets/Loads the default settings in the config.yml of PlaceholderAPI.
-     *
-     * @return A {@link java.util.HashMap HashMap<String, Object>} with the default settings for this expansion.
-     *
-     * @since 1.0.4
-     */
     @Override
     public Map<String, Object> getDefaults(){
         Map<String, Object> defaults = new HashMap<>();
@@ -72,17 +45,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
 
         return defaults;
     }
-
-    /**
-     * Will be executed, when a placeholder with our {@link #getIdentifier() identifier} is used.
-     *
-     * @param  player
-     *         A {@link org.bukkit.OfflinePlayer OfflinePlayer}.
-     * @param  identifier
-     *         A {@link java.lang.String String}.
-     *
-     * @return A String, depending on certain conditions.
-     */
+    
     public String onRequest(OfflinePlayer player, String identifier){
 
         /*
@@ -114,7 +77,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
             if(results.length >= 2){
                 if(results[0].equalsIgnoreCase("precision")){
                     try {
-                        precision = Integer.valueOf(results[1]);
+                        precision = Integer.parseInt(results[1]);
                         identifier = identifier.replace("[" + matcher.group("precision") + "]", "");
                     }catch(Exception ex){
                         identifier = "The value in the option \"Precision\" was invalid! Make sure it's a number!";
