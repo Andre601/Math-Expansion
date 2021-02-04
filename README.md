@@ -1,49 +1,87 @@
+[evalex]: https://github.com/uklimaschewski/EvalEx
+[examples]: https://github.com/Andre601/Math-Expansion/wiki/Examples
+[rounding]: https://github.com/Andre601/Math-Expansion/wiki/Config-options#rounding
+
 # Math-expansion
 This expansion lets you calculate different values (including nummerical placeholders).
 
-The syntax is `%math_<math expression>%`, where `<math expression>` can be any kind of math expression, supported by EvalEx.
-Placeholders are also supported, but you have to use `{}` and not `%`
+## Syntax
+The expansion has two specific Placeholder patterns to use.
+
+### `%math_<expression>%`
+Evaluates the provided `<expression>` with the precision and rounding defined in the config.yml of PlaceholderAPI.
+
+### `%math_[precision]:[rounding]_<expression>%`
+Evaluates the provided `<expression>` with the provided `[precision]` and `[rounding]`.  
+Both the precision and rounding can be omitted to use the corresponding setting in the config.yml of PlaceholderAPI.
 
 ## Examples
-Here are some examples of different calculations, to show what the expansion can.
+Here are some examples of different calculations, to show what the expansion can do.
+
+You can find more examples in the [wiki][examples].
 
 ### `%math_1+5-8*3/9%`
-A summary of calculations, that are possible (addition, substraction, multiplication and divition).  
-The result would be `3.333...`, wich is correct, according to known math-rule (multiplication/division before addition/substraction).
+A summary of calculations, that are possible (addition, subtraction, multiplication and division).  
+The expansion follows common rules for evaluating equations, meaning that multiplications and divisions are made before additions and subtractions.
+
+The above expression would result in `3.333...` which is correct.
 
 ### `%math_{server_online}-1%`
-This shows the current amount of online players, minus 1.  
-Supported are all kinds of placeholders, that return a number.  
-You need to use `{}` instead of the default `%` to tell the expansion, what the placeholder is.
+This example evaluates the current amount of players on the server and subtracts 1 from it.
+
+All placeholders which return a number can be used in the expansion, but they need to be in the format `{placeholder}` instead of `%placeholder%`.
 
 ### `%math_SQRT(100)%`
-This will return the square root of the given number (In this case `10` because `10*10=100`).  
-The placeholder `SQRT` is case-sensitive (can't be lowercase).
+EvalEx, the library used here, provides specific Text for common calculations.  
+In the above example do we get the square root of 100, which is 10 (`10 * 10 = 100`).
+
+These EvalEx-specific text options are case-sensitive.  
+You can find a full list of text options on the [EvalEx Readme][evalex].
 
 ### `%math_22[prc]4%`
-`[prc]` is a replacement of what normally is `%`, because of how PlaceholderAPI handles placeholders.  
-The above calculation returns the remainder of `22` (what is left after removing `4` x times, when possible), which would be `2`.
+Due to how PlaceholderAPI finds and handles placeholders are we not able to use the percent symbol (`%`) inside an expression.  
+To bypass this limitation do we use a `[prc]` placeholder, which will be replaced with a `%` before the expression gets evaluated.
 
-### `%math_5.6+4.77[precision:1]%`
-This example shows the `[precision:<number>]` in action.  
-It lets you limit/increase the amount of digits after the `.` to a specified one.  
-This is kinda like an override, since it will show a different number, compared to the one set in the config.  
-Our example above will show `10.4` even if for example, the config-option is set to 2 (which would return `10.37`).
+The `%` is used to return the remainder of a specific operation.  
+The reminder is received by removing `n2` as many times from `n1` as possible (`n1%n2`) and then return whatever is left from `n1`.
+
+In the above example do we remove 4 as many times from 20 as possible, which is 4 times and result in a remainder of 2.
+
+### `%math_1:_5.6+4.77%`
+Sometimes you may want to return a specific, precise number, which would be different from the default precision set in the config.
+
+In such a case can you use `%math_[precision]:[rounding]_<expression>%` where `[precision]` is the amount of decimals shown in the result.
+
+The above expression would return `10.370` with the default precision set in the config.yml of PlaceholderAPI.  
+But with the precision defined as 1 in the placeholder does it return `10.4`.
+
+You can also override the default rounding behaviour, which by default is `HALF_UP` (`>= 5` = rounding up, otherwise down).
+
+Both options can be omitted to use the settings defined in the config.yml of PlaceholderAPI.
+
+Take a look at the [wiki][rounding] for details on what rounding options are available and what they do.
 
 ## Config options
-On first start does the expansion create two config-options in the config.yml of PlaceholderAPI (Since v.1.0.4)  
-Those two options are `Precision` and `Debug`.
+The expansion adds a few specific settings to the config.yml of PlaceholderAPI, which can be changed if desired.
 
-`Precision` sets, how many numbers after the `.` are shown (example: `3` would shorten `5.868741` to `5.869`)  
-`Debug` enables/disables printing of the stacktrace in the console, if a invalid calculation was made (default is `off`)
+### Precision
+The default precision to use.  
+A precision of 2 would result in the numbers showing as `#.##`, 3 results in `#,###`, etc.
+
+Any number lower than 0 will automatically be changed to 0.
+
+### Rounding
+The default rounding behaviour to use.  
+When a number returns more decimals than what should be returned is the final number rounded.
+
+Example: `5.684` with a precision of 2 returns `5.68` while a precision of 1 returns `5.7`.
+
+The default rounding is `half-up` which means that any number greater or equal to 5 is rounded up and anything below is rounded down.  
+Take a look at the [wiki][rounding] for a list of supported options.
 
 ## Credits
-Math-expansion uses [EvalEx](https://github.com/uklimaschewski/EvalEx) for evaluating the math-expressions.  
+Math-expansion uses [EvalEx] for evaluating the math-expressions.  
 Check the repository for available math-expressions.
 
-## Versions
-* [1.0.0](https://api.extendedclip.com/expansions/math/versions/math-100) First release.
-* [1.0.3](https://api.extendedclip.com/expansions/math/versions/math-103) Added `[prc]` for the `%` symbol.
-* [1.0.4](https://api.extendedclip.com/expansions/math/versions/math-104) Added config-options `precision` and `debug`.
-* [1.0.6](https://api.extendedclip.com/expansions/math/versions/math-106) Added `[precision:<number>]` option.
-* [1.0.7](https://api.extendedclip.com/expansions/math/versions/math-107) Fixed version number being `null`.
+## Changelog
+Take a look at the [CHANGELOG.md][changelog] for all versions and their changes.

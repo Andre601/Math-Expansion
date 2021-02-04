@@ -5,16 +5,17 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MathExpansion extends PlaceholderExpansion implements Configurable {
-
-    private final Pattern SETTINGS_PATTERN = Pattern.compile("\\[(?<precision>[a-zA-Z0-9:]+)]");
+    
+    private final String VERSION = getClass().getPackage().getImplementationVersion();
 
     @Override
     public boolean canRegister(){
@@ -33,7 +34,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
 
     @Override
     public String getVersion() {
-        return "1.0.7";
+        return VERSION;
     }
 
     @Override
@@ -41,7 +42,8 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         Map<String, Object> defaults = new HashMap<>();
 
         defaults.put("Precision", 3);
-        defaults.put("Debug", "off");
+        defaults.put("Rounding", "half_up");
+        defaults.put("Debug", false);
 
         return defaults;
     }
@@ -55,73 +57,116 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
          */
         identifier = PlaceholderAPI.setBracketPlaceholders(player, identifier);
         identifier = identifier.replace("[prc]", "%");
+        
+        // Split identifier at _ and create an array with null as replacement if not exist.
+        String[] values = Arrays.copyOf(identifier.split("_", 2), 2);
+        
+        // Placeholder is %math_<expression>% 
+        if(values[1] == null)
+            return evaluate(values[0], getPrecision(), getRoundingMode());
+        
+        //Placeholder is %math_<text>_% -> Invalid.
+        if(values[1].isEmpty())
+            return null;
 
-        /*
-         * We setup a matcher, that checks for any appearance of [something]
-         */
-        Matcher matcher = SETTINGS_PATTERN.matcher(identifier);
-
-        /*
-         * We first set a integer with value -1, that will be used later.
-         * We then check, if the matcher has found something and if yes, we split that result at : as a String[]
-         * That String[] will be checked, if it's bigger or equal to 2 (if it found at least 2 Strings, after splitting
-         * at the :)
-         * When it finds something, we will check, if the first String (before the first :) is called "precision"
-         * and if it is the case, then we will try to get an integer out of the second String (after the :) and if
-         * that fails, we return a message about an wrong argument.
-         */
-        int precision = -1;
-        if(matcher.find()){
-            String[] results = matcher.group("precision").split(":");
-
-            if(results.length >= 2){
-                if(results[0].equalsIgnoreCase("precision")){
-                    try {
-                        precision = Integer.parseInt(results[1]);
-                        identifier = identifier.replace("[" + matcher.group("precision") + "]", "");
-                    }catch(Exception ex){
-                        identifier = "The value in the option \"Precision\" was invalid! Make sure it's a number!";
-
-                        if(this.getString("Debug", "off").equalsIgnoreCase("on"))
-                            ex.printStackTrace();
-
-                        return identifier;
-                    }
-                }else{
-                    identifier = "Invalid option-type \"" + matcher.group("precision") + "\"!";
-                    return identifier;
-                }
+        // Split values[0] at : and put null where nothing exists.
+        String[] options = Arrays.copyOf(values[0].split(":", 2), 2);
+        
+        int precision;
+        RoundingMode roundingMode;
+        
+        if(isNullOrEmpty(options[0])){
+            precision = getPrecision();
+        }else{
+            try{
+                precision = Integer.parseInt(options[0]);
+            }catch(NumberFormatException ex){
+                // String isn't a valid number -> Invalid placeholder.
+                if(isDebug())
+                    ex.printStackTrace();
+                
+                return null;
             }
         }
-
-        BigDecimal result;
-        try {
-            /*
-             * We first create a new Expression with our String identifier before then evaluating and setting it
-             * as a BigDecimal.
-             *
-             * We use setScale, to reduce the amount of numbers after the . to the one provided in the config
-             * (PlaceholderAPI/config.yml), unless there is a [precision:<number>] placeholder within the identifier
-             * itself (precision is not -1)
-             *
-             * BigDecimal.ROUND_HALF_UP is basically the same, like you've learned in school about rounding
-             * (0-4 = rounding down, 5-9 = rounding up)
-             */
-            Expression expression = new Expression(identifier);
-            result = expression.eval().setScale(
-                    precision == -1 ? this.getInt("Precision", 3) : precision,
-                    BigDecimal.ROUND_HALF_UP
-            );
-        }catch (Exception ex){
-            // If debug is set to "on", we print the StackTrace on an error.
-            if(this.getString("Debug", "off").equalsIgnoreCase("on"))
-                ex.printStackTrace();
-
-            identifier = "The provided value was invalid!\nReason: " + ex.getMessage();
-            return identifier;
+        
+        if(isNullOrEmpty(options[1])){
+            roundingMode = getRoundingMode();
+        }else{
+            roundingMode = getRoundingMode(options[1]);
         }
-
-        // We have to return it as plainString, or else it would return 10 as 1E+1 (which is just the same)
-        return result.toPlainString();
+        
+        return evaluate(values[1], precision, roundingMode);
+    }
+    
+    private String evaluate(String expression, int precision, RoundingMode roundingMode){
+        try{
+            Expression exp = new Expression(expression);
+            BigDecimal result = exp.eval().setScale(precision, roundingMode);
+            
+            return result.toPlainString();
+        }catch(Exception ex){
+            if(isDebug())
+                ex.printStackTrace();
+            
+            return null;
+        }
+    }
+    
+    private boolean isDebug(){
+        Object debug = this.get("Debug", null);
+        
+        if(debug == null)
+            return false;
+        
+        if(debug instanceof String)
+            return this.getString("Debug", "off").equalsIgnoreCase("on");
+        
+        if(debug instanceof Boolean){
+            ConfigurationSection section = this.getConfigSection();
+            if(section == null)
+                return false;
+            
+            return section.getBoolean("Debug", false);
+        }
+        
+        return false;
+    }
+    
+    private int getPrecision(){
+        return Math.max(this.getInt("Precision", 3), 0);
+    }
+    
+    private RoundingMode getRoundingMode(){
+        return getRoundingMode(this.getString("Rounding", "half-up").toLowerCase());
+    }
+    
+    private RoundingMode getRoundingMode(String mode){
+        switch(mode){
+            case "up":
+                return RoundingMode.UP;
+            
+            case "down":
+                return RoundingMode.DOWN;
+            
+            case "ceiling":
+                return RoundingMode.CEILING;
+                
+            case "floor":
+                return RoundingMode.FLOOR;
+                
+            case "half-down":
+                return RoundingMode.HALF_DOWN;
+            
+            case "half-even":
+                return RoundingMode.HALF_EVEN;
+            
+            case "half-up":
+            default:
+                return RoundingMode.HALF_UP;
+        }
+    }
+    
+    private boolean isNullOrEmpty(String value){
+        return value == null || value.isEmpty();
     }
 }
