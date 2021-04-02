@@ -68,7 +68,7 @@ The expansion adds a few specific settings to the config.yml of PlaceholderAPI, 
 
 ### Precision
 The default precision to use.  
-A precision of 2 would result in the numbers showing as `#.##`, 3 results in `#,###`, etc.
+A precision of 2 would result in the numbers showing as `#.##`, 3 results in `#.###`, etc.
 
 Any number lower than 0 will automatically be changed to 0.
 
