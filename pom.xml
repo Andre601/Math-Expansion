@@ -6,7 +6,7 @@
 
     <groupId>com.andre601</groupId>
     <artifactId>Expansion-Math</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -66,7 +66,7 @@
         </repository>
         <repository>
             <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
     </repositories>
 

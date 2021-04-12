@@ -2,6 +2,7 @@ package com.andre601.mathexpansion;
 
 import com.udojava.evalex.Expression;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -12,6 +13,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class MathExpansion extends PlaceholderExpansion implements Configurable {
     
@@ -49,7 +51,8 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     }
     
     public String onRequest(OfflinePlayer player, String identifier){
-
+        Logger logger = PlaceholderAPIPlugin.getInstance().getLogger();
+        
         /*
          * We first replace any appearance of placeholders with the right value.
          * We need to use setBracketPlaceholders, to check for {placeholders} and we also need to use [prc]
@@ -63,12 +66,15 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         
         // Placeholder is %math_<expression>% 
         if(values[1] == null)
-            return evaluate(values[0], getPrecision(), getRoundingMode());
+            return evaluate(values[0], getPrecision(), getRoundingMode(), logger);
         
         //Placeholder is %math_<text>_% -> Invalid.
-        if(values[1].isEmpty())
+        if(values[1].isEmpty()){
+            logger.warning("[Math] Invalid Placeholder. %math_<text>_% is not allowed!");
+            
             return null;
-
+        }
+        
         // Split values[0] at : and put null where nothing exists.
         String[] options = Arrays.copyOf(values[0].split(":", 2), 2);
         
@@ -82,6 +88,8 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
                 precision = Integer.parseInt(options[0]);
             }catch(NumberFormatException ex){
                 // String isn't a valid number -> Invalid placeholder.
+                logger.warning("[Math] Invalid Placeholder. Provided text '" + options[0] + "' is no valid precision number.");
+                
                 if(isDebug())
                     ex.printStackTrace();
                 
@@ -92,19 +100,21 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         if(isNullOrEmpty(options[1])){
             roundingMode = getRoundingMode();
         }else{
-            roundingMode = getRoundingMode(options[1]);
+            roundingMode = getRoundingMode(options[1].toLowerCase());
         }
         
-        return evaluate(values[1], precision, roundingMode);
+        return evaluate(values[1], precision, roundingMode, logger);
     }
     
-    private String evaluate(String expression, int precision, RoundingMode roundingMode){
+    private String evaluate(String expression, int precision, RoundingMode roundingMode, Logger logger){
         try{
             Expression exp = new Expression(expression);
             BigDecimal result = exp.eval().setScale(precision, roundingMode);
             
             return result.toPlainString();
         }catch(Exception ex){
+            logger.warning("[Math] Invalid Placeholder. '" + expression + "' is not a valid math expression.");
+            
             if(isDebug())
                 ex.printStackTrace();
             
