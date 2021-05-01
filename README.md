@@ -3,6 +3,8 @@
 [examples]: https://github.com/Andre601/Math-Expansion/wiki/Examples
 [rounding]: https://github.com/Andre601/Math-Expansion/wiki/Config-options#rounding
 
+[changelog]: https://github.com/Andre601/Math-Expansion/blob/master/CHANGELOG.md
+
 # Math-Expansion
 The Math-Expansion is a Expansion for [PlaceholderAPI] which allows you to do math-expressions.  
 Supported are all all expression supported by [EvalEx], which this Expansion uses. See the [examples](#examples) below for some of the features.
