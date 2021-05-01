@@ -51,26 +51,27 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     }
     
     public String onRequest(OfflinePlayer player, String identifier){
-        Logger logger = PlaceholderAPIPlugin.getInstance().getLogger();
+        Logger log = PlaceholderAPIPlugin.getInstance().getLogger();
         
-        /*
-         * We first replace any appearance of placeholders with the right value.
-         * We need to use setBracketPlaceholders, to check for {placeholders} and we also need to use [prc]
-         * as a replacement of the % symbol, because of how PlaceholderAPI handles placeholders.
-         */
+        // Used for warnings.
+        String placeholder = "%math_" + identifier + "%";
+        
+        // Replace any bracket placeholder when possible and replace [prc] with the percent symbol (%)
         identifier = PlaceholderAPI.setBracketPlaceholders(player, identifier);
         identifier = identifier.replace("[prc]", "%");
         
-        // Split identifier at _ and create an array with null as replacement if not exist.
+        // Create a null-padded Array by splitting at _
         String[] values = Arrays.copyOf(identifier.split("_", 2), 2);
         
         // Placeholder is %math_<expression>% 
         if(values[1] == null)
-            return evaluate(values[0], getPrecision(), getRoundingMode(), logger);
+            return evaluate(placeholder, values[0], getPrecision(), getRoundingMode(), log);
         
         //Placeholder is %math_<text>_% -> Invalid.
         if(values[1].isEmpty()){
-            logger.warning("[Math] Invalid Placeholder. %math_<text>_% is not allowed!");
+            log.warning("[Math] Invalid Placeholder detected!");
+            log.warning("[Math] Placeholder: " + placeholder);
+            log.warning("[Math] Cause: Not allowed placeholder-syntax '%math_<text>_%'");
             
             return null;
         }
@@ -88,7 +89,9 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
                 precision = Integer.parseInt(options[0]);
             }catch(NumberFormatException ex){
                 // String isn't a valid number -> Invalid placeholder.
-                logger.warning("[Math] Invalid Placeholder. Provided text '" + options[0] + "' is no valid precision number.");
+                log.warning("[Math] Invalid Placeholder detected!");
+                log.warning("[Math] Placeholder: " + placeholder);
+                log.warning("[Math] Cause: '" + options[0] + "' is not a valid number for precision!");
                 
                 if(isDebug())
                     ex.printStackTrace();
@@ -103,17 +106,19 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
             roundingMode = getRoundingMode(options[1].toLowerCase());
         }
         
-        return evaluate(values[1], precision, roundingMode, logger);
+        return evaluate(placeholder, values[1], precision, roundingMode, log);
     }
     
-    private String evaluate(String expression, int precision, RoundingMode roundingMode, Logger logger){
+    private String evaluate(String placeholder, String expression, int precision, RoundingMode roundingMode, Logger log){
         try{
             Expression exp = new Expression(expression);
             BigDecimal result = exp.eval().setScale(precision, roundingMode);
             
             return result.toPlainString();
         }catch(Exception ex){
-            logger.warning("[Math] Invalid Placeholder. '" + expression + "' is not a valid math expression.");
+            log.warning("[Math] Invalid Placeholder detected!");
+            log.warning("[Math] Placeholder: " + placeholder);
+            log.warning("[Math] Cause: '" + expression + "' is not a valid Math-Expression.");
             
             if(isDebug())
                 ex.printStackTrace();

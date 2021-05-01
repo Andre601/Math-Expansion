@@ -1,6 +1,9 @@
 # Changelog
 Below, you can find all releases of this expansion and their changes.
 
+## [1.2.2]
+- Math-Expansion now logs the used placeholder and mentions a proper cause whenever it fails to parse a Math-Expression, precision number or placeholder in general.
+
 ## [1.2.1]
 - Added Console logs for invalid placeholders.
 - Make provided rounding-mode lowercase to prevent issues.
@@ -57,3 +60,4 @@ This version still has `1.0.7` defined as expansion version. Please update to [t
 [1.1.0]: https://api.extendedclip.com/expansions/math/versions/math-110
 [1.2.0]: https://api.extendedclip.com/expansions/math/versions/math-120
 [1.2.1]: https://api.extendedclip.com/expansions/math/versions/math-121
+[1.2.2]: https://api.extendedclip.com/expansions/math/versions/math-122
