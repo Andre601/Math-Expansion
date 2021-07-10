@@ -6,7 +6,7 @@ import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,39 +18,38 @@ import java.util.logging.Logger;
 public class MathExpansion extends PlaceholderExpansion implements Configurable {
     
     private final String VERSION = getClass().getPackage().getImplementationVersion();
-
-    @Override
-    public boolean canRegister(){
-        return true;
+    private final Map<String, Object> defaults = new HashMap<>();
+    
+    public MathExpansion(){
+        defaults.put("Precision", 3);
+        defaults.put("Rounding", "half_up");
+        defaults.put("Debug", false);
     }
 
     @Override
+    @NotNull
     public String getIdentifier() {
         return "math";
     }
 
     @Override
+    @NotNull
     public String getAuthor() {
         return "Andre_601";
     }
 
     @Override
+    @NotNull
     public String getVersion() {
         return VERSION;
     }
 
     @Override
     public Map<String, Object> getDefaults(){
-        Map<String, Object> defaults = new HashMap<>();
-
-        defaults.put("Precision", 3);
-        defaults.put("Rounding", "half_up");
-        defaults.put("Debug", false);
-
-        return defaults;
+        return this.defaults;
     }
     
-    public String onRequest(OfflinePlayer player, String identifier){
+    public String onRequest(OfflinePlayer player, @NotNull String identifier){
         Logger log = PlaceholderAPIPlugin.getInstance().getLogger();
         
         // Used for warnings.
@@ -136,13 +135,8 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         if(debug instanceof String)
             return this.getString("Debug", "off").equalsIgnoreCase("on");
         
-        if(debug instanceof Boolean){
-            ConfigurationSection section = this.getConfigSection();
-            if(section == null)
-                return false;
-            
-            return section.getBoolean("Debug", false);
-        }
+        if(debug instanceof Boolean)
+            return getBoolean("Debug", false);
         
         return false;
     }
