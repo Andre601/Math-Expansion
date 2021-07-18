@@ -65,6 +65,15 @@ Both options can be omitted to use the settings defined in the config.yml of Pla
 
 Take a look at the [wiki][rounding] for details on what rounding options are available and what they do.
 
+### `%math_:ceiling_5.6+4.74%`
+The above example would add the two numbers and then round it based on Java's `ceiling` option, which always rounds the number to the next whole number in positive infinity.  
+This means that 1.5 would become 2, 2.5 becomes 3 and negative numbers like -1.5 would become -1.
+
+The example also shows that you can omit the precision value to use the [default one instead](#precision).  
+If we assume the precision value was set to `1` in the config would the above calculation return 10.4.
+
+You can find a list of all supported rounding modes in the [wiki][rounding].
+
 ## Config options
 The expansion adds a few specific settings to the config.yml of PlaceholderAPI, which can be changed if desired.
 
