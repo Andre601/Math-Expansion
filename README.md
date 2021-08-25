@@ -77,6 +77,12 @@ You can find a list of all supported rounding modes in the [wiki][rounding].
 ## Config options
 The expansion adds a few specific settings to the config.yml of PlaceholderAPI, which can be changed if desired.
 
+### Debug
+The Debug option enables or disables the expansion's debug mode.  
+With debug enabled will warnings also print an exception, if the warning is a result of an exception.
+
+This is mostly useful for support and could increase your server log files.
+
 ### Precision
 The default precision to use.  
 A precision of 2 would result in the numbers showing as `#.##`, 3 results in `#.###`, etc.

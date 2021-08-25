@@ -1,6 +1,10 @@
 # Changelog
 Below, you can find all releases of this expansion and their changes.
 
+## [1.2.4]
+- Updated EvalEx to 2.6
+- Minor code improvements
+
 ## [1.2.3]
 **This version is ONLY compatibe with PlaceholderAPI onwards!**
 
@@ -67,3 +71,4 @@ This version still has `1.0.7` defined as expansion version. Please update to [t
 [1.2.1]: https://api.extendedclip.com/expansions/math/versions/math-121
 [1.2.2]: https://api.extendedclip.com/expansions/math/versions/math-122
 [1.2.3]: https://api.extendedclip.com/expansions/math/versions/math-123
+[1.2.4]: https://api.extendedclip.com/expansions/math/versions/math-124

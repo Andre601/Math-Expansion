@@ -20,10 +20,14 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     private final String VERSION = getClass().getPackage().getImplementationVersion();
     private final Map<String, Object> defaults = new HashMap<>();
     
+    private final Logger log;
+    
     public MathExpansion(){
         defaults.put("Precision", 3);
         defaults.put("Rounding", "half_up");
         defaults.put("Debug", false);
+        
+        this.log = PlaceholderAPIPlugin.getInstance().getLogger();
     }
 
     @Override
@@ -50,7 +54,6 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     }
     
     public String onRequest(OfflinePlayer player, @NotNull String identifier){
-        Logger log = PlaceholderAPIPlugin.getInstance().getLogger();
         
         // Used for warnings.
         String placeholder = "%math_" + identifier + "%";
@@ -64,7 +67,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         
         // Placeholder is %math_<expression>% 
         if(values[1] == null)
-            return evaluate(placeholder, values[0], getPrecision(), getRoundingMode(), log);
+            return evaluate(placeholder, values[0], getPrecision(), getRoundingMode());
         
         //Placeholder is %math_<text>_% -> Invalid.
         if(values[1].isEmpty()){
@@ -105,10 +108,10 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
             roundingMode = getRoundingMode(options[1].toLowerCase());
         }
         
-        return evaluate(placeholder, values[1], precision, roundingMode, log);
+        return evaluate(placeholder, values[1], precision, roundingMode);
     }
     
-    private String evaluate(String placeholder, String expression, int precision, RoundingMode roundingMode, Logger log){
+    private String evaluate(String placeholder, String expression, int precision, RoundingMode roundingMode){
         try{
             Expression exp = new Expression(expression);
             BigDecimal result = exp.eval().setScale(precision, roundingMode);
