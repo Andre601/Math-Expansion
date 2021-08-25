@@ -1,5 +1,7 @@
 package com.andre601.mathexpansion;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.udojava.evalex.Expression;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
@@ -13,12 +15,16 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class MathExpansion extends PlaceholderExpansion implements Configurable {
     
     private final String VERSION = getClass().getPackage().getImplementationVersion();
     private final Map<String, Object> defaults = new HashMap<>();
+    private final Cache<String, Long> invalidPlaceholders = Caffeine.newBuilder()
+        .expireAfterWrite(10, TimeUnit.SECONDS)
+        .build();
     
     private final Logger log;
     
@@ -71,9 +77,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         
         //Placeholder is %math_<text>_% -> Invalid.
         if(values[1].isEmpty()){
-            log.warning("[Math] Invalid Placeholder detected!");
-            log.warning("[Math] Placeholder: " + placeholder);
-            log.warning("[Math] Cause: Not allowed placeholder-syntax '%math_<text>_%'");
+            printPlaceholderWarning(placeholder, "Not allowed placeholder-syntax '%%math_<text>_%%'");
             
             return null;
         }
@@ -91,9 +95,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
                 precision = Integer.parseInt(options[0]);
             }catch(NumberFormatException ex){
                 // String isn't a valid number -> Invalid placeholder.
-                log.warning("[Math] Invalid Placeholder detected!");
-                log.warning("[Math] Placeholder: " + placeholder);
-                log.warning("[Math] Cause: '" + options[0] + "' is not a valid number for precision!");
+                printPlaceholderWarning(placeholder, "'%s' is not a valid number for precision!", options[0]);
                 
                 if(isDebug())
                     ex.printStackTrace();
@@ -118,14 +120,23 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
             
             return result.toPlainString();
         }catch(Exception ex){
-            log.warning("[Math] Invalid Placeholder detected!");
-            log.warning("[Math] Placeholder: " + placeholder);
-            log.warning("[Math] Cause: '" + expression + "' is not a valid Math-Expression.");
+            // Math evaluation failed -> Invalid placeholder
+            printPlaceholderWarning(placeholder, "'%s' is not a valid Math Expression.", expression);
             
             if(isDebug())
                 ex.printStackTrace();
             
             return null;
+        }
+    }
+    
+    private void printPlaceholderWarning(String placeholder, String cause, Object... args){
+        if(invalidPlaceholders.getIfPresent(placeholder) == null){
+            log.warning("[Math] Invalid Placeholder detected!");
+            log.warning("[Math] Placeholder: " + placeholder);
+            log.warning(String.format("[Math] " + cause, args));
+            
+            invalidPlaceholders.put(placeholder, System.currentTimeMillis());
         }
     }
     

@@ -6,7 +6,7 @@
 
     <groupId>com.andre601</groupId>
     <artifactId>Expansion-Math</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -50,6 +50,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>com.udojava:EvalEx</include>
+                                    <include>com.github.ben-manes.caffeine:caffeine</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
@@ -87,6 +88,11 @@
             <groupId>com.udojava</groupId>
             <artifactId>EvalEx</artifactId>
             <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>3.0.3</version>
         </dependency>
     </dependencies>
 </project>

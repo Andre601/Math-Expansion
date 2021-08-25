@@ -1,6 +1,9 @@
 # Changelog
 Below, you can find all releases of this expansion and their changes.
 
+## [1.2.5]
+- Add caching for invalid placeholders to reduce warnings printed.
+
 ## [1.2.4]
 - Updated EvalEx to 2.6
 - Minor code improvements
@@ -72,3 +75,4 @@ This version still has `1.0.7` defined as expansion version. Please update to [t
 [1.2.2]: https://api.extendedclip.com/expansions/math/versions/math-122
 [1.2.3]: https://api.extendedclip.com/expansions/math/versions/math-123
 [1.2.4]: https://api.extendedclip.com/expansions/math/versions/math-124
+[1.2.5]: https://api.extendedclip.com/expansions/math/versions/math-125
