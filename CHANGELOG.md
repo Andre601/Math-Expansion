@@ -1,6 +1,9 @@
 # Changelog
 Below, you can find all releases of this expansion and their changes.
 
+## [1.2.6]
+- Possible fix to a LinkageError thrown at startup... Almost nothing has changed lol.
+
 ## [1.2.5]
 - Add caching for invalid placeholders to reduce warnings printed.
 
@@ -76,3 +79,4 @@ This version still has `1.0.7` defined as expansion version. Please update to [t
 [1.2.3]: https://api.extendedclip.com/expansions/math/versions/math-123
 [1.2.4]: https://api.extendedclip.com/expansions/math/versions/math-124
 [1.2.5]: https://api.extendedclip.com/expansions/math/versions/math-125
+[1.2.6]: https://api.extendedclip.com/expansions/math/versions/math-126
