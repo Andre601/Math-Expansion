@@ -6,6 +6,9 @@
 [changelog]: https://github.com/Andre601/Math-Expansion/blob/master/CHANGELOG.md
 
 # Math-Expansion
+> Please note that versions from 1.2.7 onwards will require Java 11 or higher to function!  
+> This is due to some dependencies requiring it. Nothing I can do against...
+
 The Math-Expansion is a Expansion for [PlaceholderAPI] which allows you to do math-expressions.  
 Supported are all all expression supported by [EvalEx], which this Expansion uses. See the [examples](#examples) below for some of the features.
 
