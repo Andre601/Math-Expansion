@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.andre601</groupId>
+    <groupId>ch.andre601</groupId>
     <artifactId>Expansion-Math</artifactId>
-    <version>1.2.6</version>
+    <version>1.2.7</version>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,7 +39,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -47,8 +47,23 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.github.benmanes.caffeine.cache</pattern>
+                                    <shadedPattern>ch.andre601.mathexpansion.dependencies.caffeine</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <artifactSet>
                                 <includes>
+                                    <include>com.github.ben-manes.caffeine:caffeine</include>
                                     <include>com.udojava:EvalEx</include>
                                 </includes>
                             </artifactSet>
@@ -92,7 +107,6 @@
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>3.0.3</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

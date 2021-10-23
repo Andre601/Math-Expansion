@@ -1,4 +1,4 @@
-package com.andre601.mathexpansion;
+package ch.andre601.mathexpansion;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
