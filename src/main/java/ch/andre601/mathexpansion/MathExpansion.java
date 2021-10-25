@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 
 public class MathExpansion extends PlaceholderExpansion implements Configurable {
     
-    private final String VERSION = getClass().getPackage().getImplementationVersion();
     private final Map<String, Object> defaults = new HashMap<>();
     private final Cache<String, Long> invalidPlaceholders = Caffeine.newBuilder()
         .expireAfterWrite(10, TimeUnit.SECONDS)
@@ -51,7 +50,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     @Override
     @NotNull
     public String getVersion() {
-        return VERSION;
+        return "VERSION";
     }
 
     @Override
