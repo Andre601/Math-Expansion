@@ -1,11 +1,15 @@
 package ch.andre601.mathexpansion;
 
+import ch.andre601.mathexpansion.logging.LegacyLogger;
+import ch.andre601.mathexpansion.logging.LoggerUtil;
+import ch.andre601.mathexpansion.logging.NativeLogger;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.udojava.evalex.Expression;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.Configurable;
+import me.clip.placeholderapi.expansion.NMSVersion;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -16,23 +20,22 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class MathExpansion extends PlaceholderExpansion implements Configurable {
+    
+    private final LoggerUtil logger;
     
     private final Map<String, Object> defaults = new HashMap<>();
     private final Cache<String, Long> invalidPlaceholders = Caffeine.newBuilder()
         .expireAfterWrite(10, TimeUnit.SECONDS)
         .build();
     
-    private final Logger log;
-    
     public MathExpansion(){
+        this.logger = loadLogger();
+        
         defaults.put("Precision", 3);
         defaults.put("Rounding", "half_up");
         defaults.put("Debug", false);
-        
-        this.log = PlaceholderAPIPlugin.getInstance().getLogger();
     }
 
     @Override
@@ -129,11 +132,19 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         }
     }
     
+    // Small utility thing to allow support for pre PAPI 2.11.0
+    private LoggerUtil loadLogger(){
+        if(NMSVersion.getVersion("v1_18_R1") != NMSVersion.UNKNOWN) // Only PAPI 2.11.0+ has this NMSVersion entry
+            return new NativeLogger(this);
+        
+        return new LegacyLogger();
+    }
+    
     private void printPlaceholderWarning(String placeholder, String cause, Object... args){
         if(invalidPlaceholders.getIfPresent(placeholder) == null){
-            log.warning("[Math] Invalid Placeholder detected!");
-            log.warning("[Math] Placeholder: " + placeholder);
-            log.warning(String.format("[Math] " + cause, args));
+            logger.logWarning("Invalid Placeholder detected!");
+            logger.logWarning("Placeholder: " + placeholder);
+            logger.logWarning(String.format(cause, args));
             
             invalidPlaceholders.put(placeholder, System.currentTimeMillis());
         }

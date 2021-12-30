@@ -21,7 +21,7 @@ repositories {
 
 dependencies {
     compileOnly('org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT')
-    compileOnly('me.clip:placeholderapi:2.10.10')
+    compileOnly('me.clip:placeholderapi:2.11.1')
     compileOnly('org.jetbrains:annotations:22.0.0')
     
     implementation('com.udojava:EvalEx:2.6')
