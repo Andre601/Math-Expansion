@@ -1,0 +1,56 @@
+name: Bug Report
+description: File a bug report with the Math expansion
+
+body:
+  - type: markdown
+    attributes:
+      value: |-
+        Thank you for reporting a bug with the Math Expansion.
+        Please make sure to fill out all required fields (marked with a *) as detailed as possible. Otherwise could your issue be closed without any fixes being made.
+  - type: checkboxes
+    attributes:
+      label: I confirm that...
+      description: Please make sure you did the below checks first before submitting this bug report.
+      options:
+        - label: I use the latest version of the expansion. [[Expansion Page](https://api.extendedclip.com/expansions/math/) | [Changelog](https://github.com/Andre601/Math-Expansion/blob/master/CHANGELOG.md)]
+          required: true
+        - label: The issue is not caused by PlaceholderAPI or any other plugin or expansion
+          required: true
+        - label: Any used placeholder works as intendet (`/papi parse me <placeholders>`)
+          required: true
+  - type: textarea
+    attributes:
+      label: Description
+      description: Please give a detailed description of the issue you encounter. Use the "Logs" section below to share any errors.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Logs
+      description: |-
+        Please share any logs that may contain useful information such as errors.
+        The posted text will be rendered as a code block.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Math Expansion version
+      description: Run `papi info Math` in the console and paste the **entire** output here.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: PlaceholderAPI version
+      description: Run `version PlaceholderAPI` in the console and paste the **entire** output here.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Server version
+      description: Run `version` in the console and paste the **entire** output here.
+      render: text
+    validations:
+      required: true
