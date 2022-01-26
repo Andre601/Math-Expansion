@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discord
+    url: https://discord.gg/6dazXp6
+    about: Use the `#math` channel for support
+  - name: Expansion Page
+    url: https://api.extendedclip.com/expansions/math/
+    about: The PlaceholderAPI Expansion page
