@@ -1,6 +1,9 @@
 # Changelog
 Below, you can find all releases of this expansion and their changes.
 
+## [1.3.2]
+- Fix wrong default for rounding mode.
+
 ## [1.3.1]
 - Updated to PlaceholderAPI 2.11.0
   - Added support for PlaceholderAPI's native Logger-system.
@@ -97,3 +100,4 @@ This version still has `1.0.7` defined as expansion version. Please update to [t
 [1.2.7]: https://api.extendedclip.com/expansions/math/versions/math-127
 [1.3.0]: https://api.extendedclip.com/expansions/math/versions/math-130
 [1.3.1]: https://api.extendedclip.com/expansions/math/versions/math-131
+[1.3.2]: https://api.extendedclip.com/expansions/math/versions/math-132
