@@ -1,6 +1,15 @@
 # Changelog
 Below, you can find all releases of this expansion and their changes.
 
+## [1.3.1]
+- Updated to PlaceholderAPI 2.11.0
+  - Added support for PlaceholderAPI's native Logger-system.
+  - A Legacy Logger system has been added for backwards compatability.
+
+## [1.3.0]
+- Fix issue with possible null version.
+- Moved project from Maven to Gradle.
+
 ## [1.2.7]
 **This and future releases will require Java 11+ to be used!**
 
@@ -86,3 +95,5 @@ This version still has `1.0.7` defined as expansion version. Please update to [t
 [1.2.5]: https://api.extendedclip.com/expansions/math/versions/math-125
 [1.2.6]: https://api.extendedclip.com/expansions/math/versions/math-126
 [1.2.7]: https://api.extendedclip.com/expansions/math/versions/math-127
+[1.3.0]: https://api.extendedclip.com/expansions/math/versions/math-130
+[1.3.1]: https://api.extendedclip.com/expansions/math/versions/math-131
