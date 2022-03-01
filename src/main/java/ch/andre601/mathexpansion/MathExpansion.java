@@ -33,7 +33,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         this.logger = loadLogger();
         
         defaults.put("Precision", 3);
-        defaults.put("Rounding", "half_up");
+        defaults.put("Rounding", "half-up");
         defaults.put("Debug", false);
     }
 
