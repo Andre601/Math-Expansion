@@ -1,0 +1,38 @@
+name: 'Mark and close stale issues'
+on:
+  schedule:
+    - chron: '30 1 * * *'
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'actions/stale@v4'
+        with:
+          stale-issue-message: |-
+            ## ![clock](https://octicons-col.vercel.app/clock/d29922/16) Stale Issue Notice
+            
+            Your issue has been marked as **stale** because it didn't receive any updates within 30 days.
+            If your issue is still present reply to the issue to update it.
+            
+            If no further updates are recorded within the next 10 days will the issue be closed!
+          close-issue-message: |-
+            ## ![issue_closed](https://octicons-col.vercel.app/issue-closed/a371f7/16) Issue closed
+            
+            No updates have been recorded for the past 10 days since your issue was marked as stale.
+            Because of this has it been **closed**.
+          
+          days-before-stale: 30
+          days-before-close: 10
+          
+          days-before-pr-stale: -1 # Never check for PRs
+          days-before-pr-close: -1
+          
+          stale-issue-label: 'Status: Stale'
+          close-issue-label: 'Result: Closed (Stale)'
+          exempt-issue-labels: 'Type: Enhancement,Info: Help Wanted'
+          
