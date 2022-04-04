@@ -13,10 +13,11 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -74,52 +75,34 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         
         // Placeholder is %math_<expression>% 
         if(values[1] == null)
-            return evaluate(placeholder, values[0], getPrecision(), getRoundingMode());
+            return evaluate(placeholder, values[0], getPrecision(null, placeholder), getRoundingMode(null));
         
-        //Placeholder is %math_<text>_% -> Invalid.
+        // Placeholder is %math_<text>_% -> Invalid.
         if(values[1].isEmpty()){
             printPlaceholderWarning(placeholder, "Not allowed placeholder-syntax '%%math_<text>_%%'");
             
             return null;
         }
         
-        // Split values[0] at : and put null where nothing exists.
+        // Create a null-padded Array by splitting values[0] at :
         String[] options = Arrays.copyOf(values[0].split(":", 2), 2);
         
-        int precision;
-        RoundingMode roundingMode;
+        int precision = getPrecision(options[0], placeholder);
+        if(precision == -1)
+            return null;
         
-        if(isNullOrEmpty(options[0])){
-            precision = getPrecision();
-        }else{
-            try{
-                precision = Integer.parseInt(options[0]);
-            }catch(NumberFormatException ex){
-                // String isn't a valid number -> Invalid placeholder.
-                printPlaceholderWarning(placeholder, "'%s' is not a valid number for precision!", options[0]);
-                
-                if(isDebug())
-                    ex.printStackTrace();
-                
-                return null;
-            }
-        }
-        
-        if(isNullOrEmpty(options[1])){
-            roundingMode = getRoundingMode();
-        }else{
-            roundingMode = getRoundingMode(options[1].toLowerCase());
-        }
+        RoundingMode roundingMode = getRoundingMode(options[1]);
         
         return evaluate(placeholder, values[1], precision, roundingMode);
     }
     
     private String evaluate(String placeholder, String expression, int precision, RoundingMode roundingMode){
         try{
-            Expression exp = new Expression(expression);
-            BigDecimal result = exp.eval().setScale(precision, roundingMode);
-            
-            return result.toPlainString();
+            return new Expression(expression)
+                .setPrecision(128)
+                .eval()
+                .round(new MathContext(precision, roundingMode))
+                .toPlainString();
         }catch(Exception ex){
             // Math evaluation failed -> Invalid placeholder
             printPlaceholderWarning(placeholder, "'%s' is not a valid Math Expression.", expression);
@@ -131,7 +114,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         }
     }
     
-    // Small utility thing to allow support for pre PAPI 2.11.0
+    // Small utility thing to allow support for pre PAPI 2.11.0 logging
     private LoggerUtil loadLogger(){
         if(NMSVersion.getVersion("v1_18_R1") != NMSVersion.UNKNOWN) // Only PAPI 2.11.0+ has this NMSVersion entry
             return new NativeLogger(this);
@@ -139,11 +122,12 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         return new LegacyLogger();
     }
     
+    // Method to print a placeholder warning every 10 seconds per placeholder.
     private void printPlaceholderWarning(String placeholder, String cause, Object... args){
         if(invalidPlaceholders.getIfPresent(placeholder) == null){
             logger.logWarning("Invalid Placeholder detected!");
             logger.logWarning("Placeholder: " + placeholder);
-            logger.logWarning(String.format(cause, args));
+            logger.logWarning(String.format("Cause: " + cause, args));
             
             invalidPlaceholders.put(placeholder, System.currentTimeMillis());
         }
@@ -155,6 +139,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         if(debug == null)
             return false;
         
+        // Backwards compatibility for before PAPI had boolean support
         if(debug instanceof String)
             return this.getString("Debug", "off").equalsIgnoreCase("on");
         
@@ -164,16 +149,30 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         return false;
     }
     
-    private int getPrecision(){
-        return Math.max(this.getInt("Precision", 3), 0);
-    }
-    
-    private RoundingMode getRoundingMode(){
-        return getRoundingMode(this.getString("Rounding", "half-up").toLowerCase());
+    private int getPrecision(String value, String placeholder){
+        if(isNullOrEmpty(value)){
+            return Math.max(this.getInt("Precision", 3), 0);
+        }else{
+            try{
+                return Integer.parseInt(value);
+            }catch(NumberFormatException ex){
+                printPlaceholderWarning(placeholder, "'%s' is not a valid number for precision!", value);
+                
+                if(isDebug())
+                    ex.printStackTrace();
+                
+                return -1;
+            }
+        }
     }
     
     private RoundingMode getRoundingMode(String mode){
-        switch(mode){
+        String def = this.getString("Rounding", "half-up");
+        if(isNullOrEmpty(mode)){
+            mode = def.isEmpty() ? "half-up" : def;
+        }
+        
+        switch(mode.toLowerCase(Locale.ROOT)){
             case "up":
                 return RoundingMode.UP;
             
