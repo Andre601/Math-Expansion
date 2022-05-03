@@ -11,6 +11,7 @@ import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.NMSVersion;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.MathContext;
@@ -59,8 +60,14 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     @Override
     public Map<String, Object> getDefaults(){
         // Check if the old "Precision" setting is present and apply the old value to the new setting.
-        if(this.getInt("Precision", -1) >= 0)
+        if(this.getInt("Precision", -1) >= 0){
+            logger.info("Found old 'Precision' setting. Starting migration process...");
+            
             this.defaults.put("Decimals", this.getInt("Precision", 3));
+            this.defaults.put("Precision", null);
+            
+            logger.info("Migrated old settings. Please check the config.yml of PlaceholderAPI for problems.");
+        }
         
         return this.defaults;
     }
@@ -129,9 +136,9 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     // Method to print a placeholder warning every 10 seconds per placeholder.
     private void printPlaceholderWarning(String placeholder, String cause, Object... args){
         if(invalidPlaceholders.getIfPresent(placeholder) == null){
-            logger.logWarning("Invalid Placeholder detected!");
-            logger.logWarning("Placeholder: " + placeholder);
-            logger.logWarning(String.format("Cause: " + cause, args));
+            logger.warn("Invalid Placeholder detected!");
+            logger.warn("Placeholder: " + placeholder);
+            logger.warn(String.format("Cause: " + cause, args));
             
             invalidPlaceholders.put(placeholder, System.currentTimeMillis());
         }

@@ -11,7 +11,12 @@ public class NativeLogger implements LoggerUtil{
     }
     
     @Override
-    public void logWarning(String text){
+    public void warn(String text){
         expansion.warning(text);
+    }
+    
+    @Override
+    public void info(String text){
+        expansion.info(text);
     }
 }
