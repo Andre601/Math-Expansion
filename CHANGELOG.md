@@ -1,6 +1,11 @@
 # Changelog
 Below, you can find all releases of this expansion and their changes.
 
+## [1.4.0]
+- Fix broken rounding behaviour.
+- Replaced `Precision` with `Decimals` setting.  
+  The expansion should automatically migrate your existing value to the new setting, but make sure to check the config afterwards.
+
 ## [1.3.2]
 - Fix wrong default for rounding mode.
 
@@ -101,3 +106,4 @@ This version still has `1.0.7` defined as expansion version. Please update to [t
 [1.3.0]: https://api.extendedclip.com/expansions/math/versions/math-130
 [1.3.1]: https://api.extendedclip.com/expansions/math/versions/math-131
 [1.3.2]: https://api.extendedclip.com/expansions/math/versions/math-132
+[1.4.0]: https://api.extendedclip.com/expansions/math/versions/math-140

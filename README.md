@@ -9,18 +9,18 @@
 > Please note that versions from 1.2.7 onwards will require Java 11 or higher to function!  
 > This is due to some dependencies requiring it. Nothing I can do against...
 
-The Math-Expansion is a Expansion for [PlaceholderAPI] which allows you to do math-expressions.  
-Supported are all all expression supported by [EvalEx], which this Expansion uses. See the [examples](#examples) below for some of the features.
+The Math-Expansion is an Expansion for [PlaceholderAPI] which allows you to do math-expressions.  
+Supported are all expression supported by [EvalEx], which this Expansion uses. See the [examples](#examples) below for some features.
 
 ## Syntax
 The expansion has two specific Placeholder patterns to use.
 
 ### `%math_<expression>%`
-Evaluates the provided `<expression>` with the precision and rounding defined in the config.yml of PlaceholderAPI.
+Evaluates the provided `<expression>` with the decimals and rounding-mode defined in the config.yml of PlaceholderAPI.
 
-### `%math_[precision]:[rounding]_<expression>%`
-Evaluates the provided `<expression>` with the provided `[precision]` and `[rounding]`.  
-Both the precision and rounding can be omitted to use the corresponding setting in the config.yml of PlaceholderAPI.
+### `%math_[decimals]:[rounding]_<expression>%`
+Evaluates the provided `<expression>` with the provided `[decimals]` and `[rounding]`.  
+Either option is optional and would default to what has been set in the `config.yml` of PlaceholderAPI.
 
 ## Examples
 Here are some examples of different calculations, to show what the expansion can do.
@@ -36,13 +36,13 @@ The above expression would result in `3.333...` which is correct.
 ### `%math_{server_online}-1%`
 This example evaluates the current amount of players on the server and subtracts 1 from it.
 
-All placeholders which return a number can be used in the expansion, but they need to be in the format `{placeholder}` instead of `%placeholder%`.
+You can use and placeholder from PlaceholderAPI that returns a valid number, but you have to use the bracket format (`{placeholder}`) instead.
 
 ### `%math_SQRT(100)%`
 EvalEx, the library used here, provides specific Text for common calculations.  
 In the above example do we get the square root of 100, which is 10 (`10 * 10 = 100`).
 
-These EvalEx-specific text options are case-sensitive.  
+These EvalEx-specific text options are case-insensitive.  
 You can find a full list of text options on the [EvalEx Readme][evalex].
 
 ### `%math_22[prc]4%`
@@ -52,12 +52,12 @@ To bypass this limitation do we use a `[prc]` placeholder, which will be replace
 The `%` is used to return the remainder of a specific operation.  
 The reminder is received by removing `n2` as many times from `n1` as possible (`n1%n2`) and then return whatever is left from `n1`.
 
-In the above example do we remove 4 as many times from 20 as possible, which is 4 times and result in a remainder of 2.
+In the above example do we remove 4 as many times from 22 as possible, which is 4 times and result in a remainder of 2.
 
 ### `%math_1:_5.6+4.77%`
 Sometimes you may want to return a specific, precise number, which would be different from the default precision set in the config.
 
-In such a case can you use `%math_[precision]:[rounding]_<expression>%` where `[precision]` is the amount of decimals shown in the result.
+In such a case can you use `%math_[decimals]:[rounding]_<expression>%` where `[decimals]` is the amount of decimals shown in the result.
 
 The above expression would return `10.370` with the default precision set in the config.yml of PlaceholderAPI.  
 But with the precision defined as 1 in the placeholder does it return `10.4`.
@@ -72,8 +72,8 @@ Take a look at the [wiki][rounding] for details on what rounding options are ava
 The above example would add the two numbers and then round it based on Java's `ceiling` option, which always rounds the number to the next whole number in positive infinity.  
 This means that 1.5 would become 2, 2.5 becomes 3 and negative numbers like -1.5 would become -1.
 
-The example also shows that you can omit the precision value to use the [default one instead](#precision).  
-If we assume the precision value was set to `1` in the config would the above calculation return 10.4.
+The example also shows that you can omit the decimals value to use the [default one instead](#decimals).  
+If we assume the decimals value was set to `1` in the config would the above calculation return 10.4.
 
 You can find a list of all supported rounding modes in the [wiki][rounding].
 
@@ -84,13 +84,15 @@ The expansion adds a few specific settings to the config.yml of PlaceholderAPI, 
 The Debug option enables or disables the expansion's debug mode.  
 With debug enabled will warnings also print an exception, if the warning is a result of an exception.
 
-This is mostly useful for support and could increase your server log files.
+This is mostly useful for support and could increase the size of your server log files.
 
-### Precision
-The default precision to use.  
-A precision of 2 would result in the numbers showing as `#.##`, 3 results in `#.###`, etc.
+### Decimals
+Sets how many decimal points after the dot should be shown.
 
-Any number lower than 0 will automatically be changed to 0.
+By default, are 3 decimals shown, which means that a number such as `123.4567` would become `123.457`.  
+The actual result also depends on what [rounding mode](#rounding) has been selected.
+
+If the number is lower than 0 will it default to 0.
 
 ### Rounding
 The default rounding behaviour to use.  
