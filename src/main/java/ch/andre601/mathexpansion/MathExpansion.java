@@ -33,7 +33,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     public MathExpansion(){
         this.logger = loadLogger();
         
-        defaults.put("Precision", 3);
+        defaults.put("Decimals", 3);
         defaults.put("Rounding", "half-up");
         defaults.put("Debug", false);
     }
@@ -58,6 +58,10 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
 
     @Override
     public Map<String, Object> getDefaults(){
+        // Check if the old "Precision" setting is present and apply the old value to the new setting.
+        if(this.getInt("Precision", -1) >= 0)
+            this.defaults.put("Decimals", this.getInt("Precision", 3));
+        
         return this.defaults;
     }
     
@@ -96,12 +100,12 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         return evaluate(placeholder, values[1], precision, roundingMode);
     }
     
-    private String evaluate(String placeholder, String expression, int precision, RoundingMode roundingMode){
+    private String evaluate(String placeholder, String expression, int decimals, RoundingMode roundingMode){
         try{
             return new Expression(expression)
                 .setPrecision(128)
                 .eval()
-                .round(new MathContext(precision, roundingMode))
+                .round(new MathContext(decimals, roundingMode))
                 .toPlainString();
         }catch(Exception ex){
             // Math evaluation failed -> Invalid placeholder
@@ -151,7 +155,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     
     private int getPrecision(String value, String placeholder){
         if(isNullOrEmpty(value)){
-            return Math.max(this.getInt("Precision", 3), 0);
+            return Math.max(this.getInt("Decimals", 3), 0);
         }else{
             try{
                 return Integer.parseInt(value);
