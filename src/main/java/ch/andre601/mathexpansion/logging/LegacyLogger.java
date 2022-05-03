@@ -7,13 +7,19 @@ import java.util.logging.Logger;
 public class LegacyLogger implements LoggerUtil{
     
     private final Logger logger;
+    private final String prefix = "[Math] ";
     
     public LegacyLogger(){
         this.logger = PlaceholderAPIPlugin.getInstance().getLogger();
     }
     
     @Override
-    public void logWarning(String text){
-        logger.warning("[Math] " + text);
+    public void warn(String text){
+        logger.warning(prefix + text);
+    }
+    
+    @Override
+    public void info(String text){
+        logger.info(prefix + text);
     }
 }
