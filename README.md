@@ -16,66 +16,55 @@ Supported are all expression supported by [EvalEx], which this Expansion uses. S
 The expansion has two specific Placeholder patterns to use.
 
 ### `%math_<expression>%`
-Evaluates the provided `<expression>` with the decimals and rounding-mode defined in the config.yml of PlaceholderAPI.
+Used for normal calculations while using the default [decimal count](#decimals) and [rounding behaviour](#rounding)
 
 ### `%math_[decimals]:[rounding]_<expression>%`
-Evaluates the provided `<expression>` with the provided `[decimals]` and `[rounding]`.  
-Either option is optional and would default to what has been set in the `config.yml` of PlaceholderAPI.
+Used for calculations using your own [decimal count](#set-amount-of-shown-decimals) and [rounding behaviour](#set-rounding-behaviour).  
+Either value is optional and not providing one uses the default values set in the [Config](#config-options).
 
-## Examples
-Here are some examples of different calculations, to show what the expansion can do.
+### Normal Math expressions
+Math-Expansion supports all common math expressions such as $1+2$, $3-4$, $5*6$ or $7/8$  
+Those expressions can be used as-is without any real problem. Just keep in mind that expressions follow common logic which is that **multiplication and division come before addition and substraction**.
 
-You can find more examples in the [wiki][examples].
+If you want specific expressions to be done first, even tho logic would prioritize others can you put them into brackets (i.e. `(1+2)*3` would result in `1+2` being done first before multiplying by 3).
 
-### `%math_1+5-8*3/9%`
-A summary of calculations, that are possible (addition, subtraction, multiplication and division).  
-The expansion follows common rules for evaluating equations, meaning that multiplications and divisions are made before additions and subtractions.
+### Placeholders in Math expressions
+You can use any placeholders from PlaceholderAPI that return **valid numbers**.  
+When using placeholders will you need to use the curly brackets format (`{some_placeholder}`) rather than the percent placeholders.
 
-The above expression would result in `3.333...` which is correct.
+As an example can you use `{server_online}` in your expressions to use the amount of online players in your server.
 
-### `%math_{server_online}-1%`
-This example evaluates the current amount of players on the server and subtracts 1 from it.
+### Using percent symbol
+Due to how PlaceholderAPI handles placeholders can you not use the percent symbol (`%`) inside math expressions, as PlaceholderAPI would assume this to be the end of a placeholder.  
+To bypass this limitation does the Math-Expansion add a `[prc]` placeholder that you can use. This text will be replaced with an actual percent symbol before doing calculations.
 
-You can use and placeholder from PlaceholderAPI that returns a valid number, but you have to use the bracket format (`{placeholder}`) instead.
+### Special expressions
+Certain expressions cannot be reproduced with letters in the Math-Expansion. For example can $\sqrt{100*10}$ not be used as shown.  
+Because of this does [EvalEx][evalex], the library used by Math-Expansion, provide specific custom patterns that allow to do these kinds of special calculations.
 
-### `%math_SQRT(100)%`
-EvalEx, the library used here, provides specific Text for common calculations.  
-In the above example do we get the square root of 100, which is 10 (`10 * 10 = 100`).
+To f.e. do the above expression would you use `SQRT(100*10)` as the expression, which would now get the square root of $100*10$.
 
-These EvalEx-specific text options are case-insensitive.  
-You can find a full list of text options on the [EvalEx Readme][evalex].
+EvalEx offers a lot of different formats you can use, so check out their readme for more information.  
+Note: Those patterns are case-insensitive.
 
-### `%math_22[prc]4%`
-Due to how PlaceholderAPI finds and handles placeholders are we not able to use the percent symbol (`%`) inside an expression.  
-To bypass this limitation do we use a `[prc]` placeholder, which will be replaced with a `%` before the expression gets evaluated.
+### Set amount of shown decimals
+Sometimes an expression can return a relatively large number such as `3.333333...`.  
+The Math-Expansion does by default only show the first three decimals of a number, turning the above shown one into `3.333`.
 
-The `%` is used to return the remainder of a specific operation.  
-The reminder is received by removing `n2` as many times from `n1` as possible (`n1%n2`) and then return whatever is left from `n1`.
+If you want to lower or increase the amound of decimals without altering the [config option](#decimals) can you set your own decimal count using the [advanced placeholder-pattern](#math_decimalsrounding_expression).
 
-In the above example do we remove 4 as many times from 22 as possible, which is 4 times and result in a remainder of 2.
+For example will `%math_5:_8+1.234567%` set the amount of decimals to 5, resulting in the returned number looking like this: `9.23457`
 
-### `%math_1:_5.6+4.77%`
-Sometimes you may want to return a specific, precise number, which would be different from the default precision set in the config.
+**Note:** The final number depends on what rounding behaviour has been set.
 
-In such a case can you use `%math_[decimals]:[rounding]_<expression>%` where `[decimals]` is the amount of decimals shown in the result.
+### Set rounding behaviour
+By default is the Math-Expression using `Half Up` as rounding behaviour, which means that numbers between 1 and 4 will be rounded down while numbers 5 to 9 will be rounded up.
 
-The above expression would return `10.370` with the default precision set in the config.yml of PlaceholderAPI.  
-But with the precision defined as 1 in the placeholder does it return `10.4`.
+If you would like to use a different rounding behaviour while not altering the [config option](#rounding) can you provide a valid rounding behaviour in the [advanced placeholder-pattern](#math_decimalsrounding_expression) like this: `%math_:ceiling_8+1.2222%`
 
-You can also override the default rounding behaviour, which by default is `HALF_UP` (`>= 5` = rounding up, otherwise down).
+The above shown expression would - assuming a default decimal count of 3 is used - result in `9.223` even tho by normal standards would it be `9.222`.
 
-Both options can be omitted to use the settings defined in the config.yml of PlaceholderAPI.
-
-Take a look at the [wiki][rounding] for details on what rounding options are available and what they do.
-
-### `%math_:ceiling_5.6+4.74%`
-The above example would add the two numbers and then round it based on Java's `ceiling` option, which always rounds the number to the next whole number in positive infinity.  
-This means that 1.5 would become 2, 2.5 becomes 3 and negative numbers like -1.5 would become -1.
-
-The example also shows that you can omit the decimals value to use the [default one instead](#decimals).  
-If we assume the decimals value was set to `1` in the config would the above calculation return 10.4.
-
-You can find a list of all supported rounding modes in the [wiki][rounding].
+You may find more detailed explanations and examples of this option on the [wiki](https://github.com/Andre601/Math-Expansion/wiki/Config-options#rounding).
 
 ## Config options
 The expansion adds a few specific settings to the config.yml of PlaceholderAPI, which can be changed if desired.
