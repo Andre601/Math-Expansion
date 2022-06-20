@@ -20,7 +20,7 @@ The expansion has two specific Placeholder patterns to use.
 Used for normal calculations while using the default [decimal count](#decimals) and [rounding behaviour](#rounding)
 
 ### `%math_[decimals]:[rounding]_<expression>%`
-Used for calculations using your own [decimal count](#set-amount-of-shown-decimals) and [rounding behaviour](#set-rounding-behaviour).  
+Used for calculations using your own [decimal count](#set-amount-of-shown-digits) and [rounding behaviour](#set-rounding-behaviour).  
 Either value is optional and not providing one uses the default values set in the [Config](#config-options).
 
 ### Normal Math expressions
@@ -48,13 +48,15 @@ To f.e. do the above expression would you use `SQRT(100*10)` as the expression, 
 EvalEx offers a lot of different formats you can use, so check out their readme for more information.  
 Note: Those patterns are case-insensitive.
 
-### Set amount of shown decimals
+### Set amount of shown digits
 Sometimes an expression can return a relatively large number such as `3.333333...`.  
-The Math-Expansion does by default only show the first three decimals of a number, turning the above shown one into `3.333`.
+The Math-Expansion does by default only show the first three digits of a number, turning the above shown one into `3.33`.
 
-If you want to lower or increase the amound of decimals without altering the [config option](#decimals) can you set your own decimal count using the [advanced placeholder-pattern](#math_decimalsrounding_expression).
+Note that the whole number (Everything before the dot) will be shown, even if the number has more digits than what you have set. The number itself may get rounded tho.
 
-For example will `%math_5:_8+1.234567%` set the amount of decimals to 5, resulting in the returned number looking like this: `9.23457`
+If you want to lower or increase the amound of digits without altering the [config option](#decimals) can you set your own digits count using the [advanced placeholder-pattern](#math_decimalsrounding_expression).
+
+For example will `%math_5:_8+1.234567%` set the amount of digits to 5, resulting in the returned number looking like this: `9.2346`
 
 **Note:** The final number depends on what rounding behaviour has been set.
 
@@ -63,7 +65,7 @@ By default is the Math-Expression using `Half Up` as rounding behaviour, which m
 
 If you would like to use a different rounding behaviour while not altering the [config option](#rounding) can you provide a valid rounding behaviour in the [advanced placeholder-pattern](#math_decimalsrounding_expression) like this: `%math_:ceiling_8+1.2222%`
 
-The above shown expression would - assuming a default decimal count of 3 is used - result in `9.223` even tho by normal standards would it be `9.222`.
+The above shown expression would - assuming a default digits count of 3 is used - result in `9.23` even tho by normal standards would it be `9.22`.
 
 You may find more detailed explanations and examples of this option on the [wiki](https://github.com/Andre601/Math-Expansion/wiki/Config-options#rounding).
 
@@ -77,9 +79,10 @@ With debug enabled will warnings also print an exception, if the warning is a re
 This is mostly useful for support and could increase the size of your server log files.
 
 ### Decimals
-Sets how many decimal points after the dot should be shown.
+Sets how many digits of the number should be shown by default.  
+The option name may be a bit misleading and may get changed in the future.
 
-By default, are 3 decimals shown, which means that a number such as `123.4567` would become `123.457`.  
+By default, are 3 digits shown, which means that a number such as `123.4567` would become `123`.  
 The actual result also depends on what [rounding mode](#rounding) has been selected.
 
 If the number is lower than 0 will it default to 0.
@@ -88,7 +91,7 @@ If the number is lower than 0 will it default to 0.
 The default rounding behaviour to use.  
 When a number returns more decimals than what should be returned is the final number rounded.
 
-Example: `5.684` with a precision of 2 returns `5.68` while a precision of 1 returns `5.7`.
+Example: `5.684` with a precision of 2 returns `5.7` while a precision of 1 returns `6`.
 
 The default rounding is `half-up` which means that any number greater or equal to 5 is rounded up and anything below is rounded down.  
 Take a look at the [wiki][rounding] for a list of supported options.
