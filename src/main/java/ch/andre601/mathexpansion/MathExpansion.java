@@ -13,7 +13,6 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -111,7 +110,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
             return new Expression(expression)
                 .setPrecision(128)
                 .eval()
-                .round(new MathContext(decimals, roundingMode))
+                .setScale(decimals, roundingMode)
                 .toPlainString();
         }catch(Exception ex){
             // Math evaluation failed -> Invalid placeholder
