@@ -16,7 +16,7 @@ body:
           required: true
         - label: The issue is not caused by PlaceholderAPI or any other plugin or expansion
           required: true
-        - label: Any used placeholder works as intendet (`/papi parse me <placeholders>`)
+        - label: All placeholders used in the expansion return valid Numbers (`/papi parse me <placeholders>`)
           required: true
   - type: textarea
     attributes:
