@@ -23,11 +23,15 @@ Used for normal calculations while using the default [decimal count](#decimals) 
 Used for calculations using your own [decimal count](#set-amount-of-shown-decimals) and [rounding behaviour](#set-rounding-behaviour).  
 Either value is optional and not providing one uses the default values set in the [Config](#config-options).
 
+## Features
+
 ### Normal Math expressions
 Math-Expansion supports all common math expressions such as $1+2$, $3-4$, $5*6$ or $7/8$  
 Those expressions can be used as-is without any real problem. Just keep in mind that expressions follow common logic which is that **multiplication and division come before addition and substraction**.
 
 If you want specific expressions to be done first, even tho logic would prioritize others can you put them into brackets (i.e. `(1+2)*3` would result in `1+2` being done first before multiplying by 3).
+
+----
 
 ### Placeholders in Math expressions
 You can use any placeholders from PlaceholderAPI that return **valid numbers**.  
@@ -35,9 +39,13 @@ When using placeholders will you need to use the curly brackets format (`{some_p
 
 As an example can you use `{server_online}` in your expressions to use the amount of online players in your server.
 
+----
+
 ### Using percent symbol
 Due to how PlaceholderAPI handles placeholders can you not use the percent symbol (`%`) inside math expressions, as PlaceholderAPI would assume this to be the end of a placeholder.  
 To bypass this limitation does the Math-Expansion add a `[prc]` placeholder that you can use. This text will be replaced with an actual percent symbol before doing calculations.
+
+----
 
 ### Special expressions
 Certain expressions cannot be reproduced with letters in the Math-Expansion. For example can $\sqrt{100*10}$ not be used as shown.  
@@ -48,6 +56,8 @@ To f.e. do the above expression would you use `SQRT(100*10)` as the expression, 
 EvalEx offers a lot of different formats you can use, so check out their readme for more information.  
 Note: Those patterns are case-insensitive.
 
+----
+
 ### Set amount of shown decimals
 Sometimes an expression can return a relatively large number such as `3.333333...`.  
 The Math-Expansion does by default only show the first three decimals of a number, turning the above shown one into `3.333`.
@@ -56,8 +66,10 @@ If you want to lower or increase the amount of decimals without altering the [co
 
 For example will `%math_5:_8+1.234567%` set the amount of decimals to 5, resulting in the returned number looking like this: `9.23457`
 
-> **Note:**  
+> **Note**  
 > The final number depends on what rounding behaviour has been set.
+
+----
 
 ### Set rounding behaviour
 By default, is the Math-Expression using `Half Up` as rounding behaviour, which means that numbers between 1 and 4 will be rounded down while numbers 5 to 9 will be rounded up.
@@ -77,6 +89,8 @@ With debug enabled will warnings also print an exception, if the warning is a re
 
 This is mostly useful for support and could increase the size of your server log files.
 
+----
+
 ### Decimals
 Sets the amount of decimal points (digits after the dot) should be shown by default in the final number.
 
@@ -84,6 +98,8 @@ The default value - which is also used whenever an invalid value has been set in
 Keep in mind that the actual number also depends on what [rounding behaviour](#rounding) is used.
 
 If the number is lower than 0 will it default to 0.
+
+----
 
 ### Rounding
 The default rounding behaviour to use.  
