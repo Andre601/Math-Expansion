@@ -45,6 +45,9 @@ As an example can you use `{server_online}` in your expressions to use the amoun
 Due to how PlaceholderAPI handles placeholders can you not use the percent symbol (`%`) inside math expressions, as PlaceholderAPI would assume this to be the end of a placeholder.  
 To bypass this limitation does the Math-Expansion add a `[prc]` placeholder that you can use. This text will be replaced with an actual percent symbol before doing calculations.
 
+> **Warning**  
+> The `[prc]` can NOT be used for placeholders in PlaceholderAPI. See the [Previous section](#placeholders-in-math-expressions) for more info.
+
 ----
 
 ### Special expressions
