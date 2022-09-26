@@ -6,6 +6,14 @@
 [changelog]: https://github.com/Andre601/Math-Expansion/blob/master/CHANGELOG.md
 
 # Math-Expansion
+
+<a href="https://discord.gg/6dazXp6" target="_blank">
+  <img alt="discord" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@2/assets/minimal/social/discord-singular_vector.svg" height="64" align="right">
+</a>
+<a href="https://app.revolt.chat/invite/74TpERXA" target="_blank">
+  <img alt="revolt" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@2/assets/minimal/social/revolt-singular_vector.svg" height="64" align="right">
+</a>
+
 > **Note**  
 > Versions 1.2.7 and newer require Java 11 or higher to work!  
 > This is due to some required dependencies needing it.
