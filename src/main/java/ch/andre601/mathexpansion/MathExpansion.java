@@ -3,9 +3,12 @@ package ch.andre601.mathexpansion;
 import ch.andre601.mathexpansion.logging.LegacyLogger;
 import ch.andre601.mathexpansion.logging.LoggerUtil;
 import ch.andre601.mathexpansion.logging.NativeLogger;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.udojava.evalex.Expression;
+import com.ezylang.evalex.EvaluationException;
+import com.ezylang.evalex.Expression;
+import com.ezylang.evalex.config.ExpressionConfiguration;
+import com.ezylang.evalex.parser.ParseException;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.NMSVersion;
@@ -13,6 +16,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,9 +29,11 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     private final LoggerUtil logger;
     
     private final Map<String, Object> defaults = new HashMap<>();
-    private final Cache<String, Long> invalidPlaceholders = Caffeine.newBuilder()
+    private final Cache<String, Long> invalidPlaceholders = CacheBuilder.newBuilder()
         .expireAfterWrite(10, TimeUnit.SECONDS)
         .build();
+    
+    private ExpressionConfiguration defaultConfiguration = null;
     
     public MathExpansion(){
         this.logger = loadLogger();
@@ -83,8 +89,12 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         String[] values = Arrays.copyOf(identifier.split("_", 2), 2);
         
         // Placeholder is %math_<expression>% 
-        if(values[1] == null)
-            return evaluate(placeholder, values[0], getPrecision(null, placeholder), getRoundingMode(null));
+        if(values[1] == null){
+            if(defaultConfiguration == null)
+                defaultConfiguration = createConfiguration(getPrecision(null, placeholder), null);
+            
+            return evaluate(placeholder, values[0], defaultConfiguration);
+        }
         
         // Placeholder is %math_<text>_% -> Invalid.
         if(values[1].isEmpty()){
@@ -100,27 +110,33 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         if(precision == -1)
             return null;
         
-        RoundingMode roundingMode = getRoundingMode(options[1]);
+        ExpressionConfiguration configuration = createConfiguration(precision, options[1]);
         
-        return evaluate(placeholder, values[1], precision, roundingMode);
+        return evaluate(placeholder, values[1], configuration);
     }
     
-    private String evaluate(String placeholder, String expression, int decimals, RoundingMode roundingMode){
+    private String evaluate(String placeholder, String expression, ExpressionConfiguration configuration){
+        Expression exp = new Expression(expression, configuration);
+        
         try{
-            return new Expression(expression)
-                .setPrecision(128)
-                .eval()
-                .setScale(decimals, roundingMode)
-                .toPlainString();
-        }catch(Exception ex){
-            // Math evaluation failed -> Invalid placeholder
-            printPlaceholderWarning(placeholder, "'%s' is not a valid Math Expression.", expression);
+            return exp.evaluate().getStringValue();
+        }catch(EvaluationException | ParseException ex){
+            printPlaceholderWarning(placeholder, "'%s' is not a valid Math Expression", expression);
             
             if(isDebug())
                 ex.printStackTrace();
             
             return null;
         }
+    }
+    
+    private ExpressionConfiguration createConfiguration(int precision, String roundingMode){
+        RoundingMode mode = getRoundingMode(roundingMode);
+        
+        return ExpressionConfiguration.builder()
+            .mathContext(new MathContext(68, mode))
+            .decimalPlacesRounding(precision)
+            .build();
     }
     
     // Small utility thing to allow support for pre PAPI 2.11.0 logging
