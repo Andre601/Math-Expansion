@@ -41,6 +41,7 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         defaults.put("Decimals", 3);
         defaults.put("Rounding", "half-up");
         defaults.put("Debug", false);
+        defaults.put("Disable-Warnings", false);
     }
 
     @Override
@@ -149,6 +150,9 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     
     // Method to print a placeholder warning every 10 seconds per placeholder.
     private void printPlaceholderWarning(String placeholder, String cause, Object... args){
+        if(this.getBoolean("Disable-Warnings", false))
+            return;
+            
         if(invalidPlaceholders.getIfPresent(placeholder) == null){
             logger.warn("Invalid Placeholder detected!");
             logger.warn("Placeholder: " + placeholder);
