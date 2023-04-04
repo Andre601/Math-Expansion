@@ -119,7 +119,7 @@ When true, disables the printing of warnings such as this one:
 [00:00:00 WARN]: [PlaceholderAPI] [math] Placeholder: %math_1-%
 [00:00:00 WARN]: [PlaceholderAPI] [math] Cause: '1-' is not a valid Math Expression
 ```
-It is recommended to **not** disable this option as it would otherwise make it more difficult to detect and find wrongly formatted placeholders.
+It is recommended to **not** enable this option as it would otherwise make it more difficult to detect and find wrongly formatted placeholders.
 
 ----
 

@@ -1,6 +1,14 @@
 # Changelog
 Below, you can find all releases of this expansion and their changes.
 
+## [2.0.1]
+- Added `Disable-Warnings` option.
+  - When set to true, disables all printings of invalid Placeholder warnings. It's recommended to not enable this option.
+
+## [2.0.0]
+- Updated EvalEx to their new v3 release. No difference should be noticed.
+- Removed Caffeine and instead use the Cache mechanic provided by a Google library (Part of Spigot).
+
 ## [1.4.1]
 - Fix broken rounding behaviour... for real this time.
 
@@ -111,3 +119,5 @@ This version still has `1.0.7` defined as expansion version. Please update to [t
 [1.3.2]: https://api.extendedclip.com/expansions/math/versions/math-132
 [1.4.0]: https://api.extendedclip.com/expansions/math/versions/math-140
 [1.4.1]: https://api.extendedclip.com/expansions/math/versions/math-141
+[2.0.0]: https://api.extendedclip.com/expansions/math/versions/math-200
+[2.0.1]: https://api.extendedclip.com/expansions/math/versions/math-201
