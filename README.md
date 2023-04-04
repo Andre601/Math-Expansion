@@ -112,6 +112,17 @@ If the number is lower than 0 will it default to 0.
 
 ----
 
+### Disable-Warnings
+When true, disables the printing of warnings such as this one:  
+```
+[00:00:00 WARN]: [PlaceholderAPI] [math] Invalid Placeholder detected!
+[00:00:00 WARN]: [PlaceholderAPI] [math] Placeholder: %math_1-%
+[00:00:00 WARN]: [PlaceholderAPI] [math] Cause: '1-' is not a valid Math Expression
+```
+It is recommended to **not** disable this option as it would otherwise make it more difficult to detect and find wrongly formatted placeholders.
+
+----
+
 ### Rounding
 The default rounding behaviour to use.  
 When the number returns more decimals than what should be displayed will it get rounded to the set decimal count.
