@@ -5,7 +5,6 @@ import ch.andre601.mathexpansion.logging.LoggerUtil;
 import ch.andre601.mathexpansion.logging.NativeLogger;
 import com.ezylang.evalex.EvaluationException;
 import com.ezylang.evalex.Expression;
-import com.ezylang.evalex.config.ExpressionConfiguration;
 import com.ezylang.evalex.parser.ParseException;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -16,7 +15,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.MathContext;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,8 +31,6 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
     private final Cache<String, Long> invalidPlaceholders = CacheBuilder.newBuilder()
         .expireAfterWrite(10, TimeUnit.SECONDS)
         .build();
-    
-    private ExpressionConfiguration defaultConfiguration = null;
     
     public MathExpansion(){
         this.logger = loadLogger();
@@ -77,131 +74,74 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
         return this.defaults;
     }
     
+    @Override
     public String onRequest(OfflinePlayer player, @NotNull String identifier){
-        
-        // Used for warnings.
         String placeholder = "%math_" + identifier + "%";
         
-        // Replace any bracket placeholder when possible and replace [prc] with the percent symbol (%)
-        identifier = PlaceholderAPI.setBracketPlaceholders(player, identifier);
-        identifier = identifier.replace("[prc]", "%");
+        // Parse {placeholder} and replace [prc] with % for math expressions.
+        String content = PlaceholderAPI.setBracketPlaceholders(player, identifier).replace("[prc]", "%");
         
-        // Create a null-padded Array by splitting at _
-        String[] values = Arrays.copyOf(identifier.split("_", 2), 2);
+        String[] values = content.split("_", 2);
+        if(values.length == 1)
+            return evaluateExpression(placeholder, values[0], scale(null, placeholder), roundingMode(null));
         
-        // Placeholder is %math_<expression>% 
-        if(values[1] == null){
-            if(defaultConfiguration == null)
-                defaultConfiguration = createConfiguration(getPrecision(null, placeholder), null);
-            
-            return evaluate(placeholder, values[0], defaultConfiguration);
-        }
-        
-        // Placeholder is %math_<text>_% -> Invalid.
+        // %math_<text>_% -> Invalid placeholder format
         if(values[1].isEmpty()){
-            printPlaceholderWarning(placeholder, "Not allowed placeholder-syntax '%%math_<text>_%%'");
+            printPlaceholderWarn(placeholder, "'%%math_<text>_%%' is not an allowed placeholder syntax.");
             
             return null;
         }
         
-        // Create a null-padded Array by splitting values[0] at :
         String[] options = Arrays.copyOf(values[0].split(":", 2), 2);
         
-        int precision = getPrecision(options[0], placeholder);
-        if(precision == -1)
+        int scale = scale(options[0], placeholder);
+        if(scale == -1)
             return null;
         
-        ExpressionConfiguration configuration = createConfiguration(precision, options[1]);
+        RoundingMode mode = roundingMode(options[1]);
         
-        return evaluate(placeholder, values[1], configuration);
+        return evaluateExpression(placeholder, values[1], scale, mode);
     }
     
-    private String evaluate(String placeholder, String expression, ExpressionConfiguration configuration){
-        Expression exp = new Expression(expression, configuration);
+    private String evaluateExpression(String placeholder, String exp, int scale, RoundingMode roundingMode){
+        Expression expression = new Expression(exp);
         
         try{
-            return exp.evaluate().getStringValue();
-        }catch(EvaluationException | ParseException ex){
-            printPlaceholderWarning(placeholder, "'%s' is not a valid Math Expression", expression);
+            BigDecimal bd = expression.evaluate().getNumberValue();
             
-            if(isDebug())
+            return bd.setScale(scale, roundingMode).toPlainString();
+        }catch(EvaluationException | ParseException ex){
+            printPlaceholderWarn(placeholder, "'%s' is not a valid Math expression.", exp);
+            
+            if(debugModeEnabled())
                 ex.printStackTrace();
             
             return null;
         }
     }
     
-    private ExpressionConfiguration createConfiguration(int precision, String roundingMode){
-        RoundingMode mode = getRoundingMode(roundingMode);
-        
-        return ExpressionConfiguration.builder()
-            .mathContext(new MathContext(68, mode))
-            .decimalPlacesRounding(precision)
-            .build();
-    }
-    
-    // Small utility thing to allow support for pre PAPI 2.11.0 logging
-    private LoggerUtil loadLogger(){
-        if(NMSVersion.getVersion("v1_18_R1") != NMSVersion.UNKNOWN) // Only PAPI 2.11.0+ has this NMSVersion entry
-            return new NativeLogger(this);
-        
-        return new LegacyLogger();
-    }
-    
-    // Method to print a placeholder warning every 10 seconds per placeholder.
-    private void printPlaceholderWarning(String placeholder, String cause, Object... args){
-        if(this.getBoolean("Disable-Warnings", false))
-            return;
-            
-        if(invalidPlaceholders.getIfPresent(placeholder) == null){
-            logger.warn("Invalid Placeholder detected!");
-            logger.warn("Placeholder: " + placeholder);
-            logger.warn(String.format("Cause: " + cause, args));
-            
-            invalidPlaceholders.put(placeholder, System.currentTimeMillis());
-        }
-    }
-    
-    private boolean isDebug(){
-        Object debug = this.get("Debug", null);
-        
-        if(debug == null)
-            return false;
-        
-        // Backwards compatibility for before PAPI had boolean support
-        if(debug instanceof String)
-            return this.getString("Debug", "off").equalsIgnoreCase("on");
-        
-        if(debug instanceof Boolean)
-            return getBoolean("Debug", false);
-        
-        return false;
-    }
-    
-    private int getPrecision(String value, String placeholder){
-        if(isNullOrEmpty(value)){
+    private int scale(String value, String placeholder){
+        if(value == null || value.isEmpty())
             return Math.max(this.getInt("Decimals", 3), 0);
-        }else{
-            try{
-                return Integer.parseInt(value);
-            }catch(NumberFormatException ex){
-                printPlaceholderWarning(placeholder, "'%s' is not a valid number for precision!", value);
-                
-                if(isDebug())
-                    ex.printStackTrace();
-                
-                return -1;
-            }
+        
+        try{
+            return Integer.parseInt(value);
+        }catch(NumberFormatException ex){
+            printPlaceholderWarn(placeholder, "%s is not a valid integer number.", value);
+            
+            if(debugModeEnabled())
+                ex.printStackTrace();
+            
+            return -1;
         }
     }
     
-    private RoundingMode getRoundingMode(String mode){
-        String def = this.getString("Rounding", "half-up");
-        if(isNullOrEmpty(mode)){
-            mode = def.isEmpty() ? "half-up" : def;
-        }
+    private RoundingMode roundingMode(String roundingMode){
+        String defRoundingMode = this.getString("Rounding", "half-up");
+        if(roundingMode == null || roundingMode.isEmpty())
+            roundingMode = defRoundingMode.isEmpty() ? "half-up" : defRoundingMode;
         
-        switch(mode.toLowerCase(Locale.ROOT)){
+        switch(roundingMode.toLowerCase(Locale.ROOT)){
             case "up":
                 return RoundingMode.UP;
             
@@ -210,23 +150,52 @@ public class MathExpansion extends PlaceholderExpansion implements Configurable 
             
             case "ceiling":
                 return RoundingMode.CEILING;
-                
+            
             case "floor":
                 return RoundingMode.FLOOR;
-                
+            
             case "half-down":
                 return RoundingMode.HALF_DOWN;
             
             case "half-even":
                 return RoundingMode.HALF_EVEN;
             
-            case "half-up":
             default:
                 return RoundingMode.HALF_UP;
         }
     }
     
-    private boolean isNullOrEmpty(String value){
-        return value == null || value.isEmpty();
+    private void printPlaceholderWarn(String placeholder, String cause, Object... args){
+        if(this.getBoolean("Disable-Warnings", false))
+            return;
+        
+        if(invalidPlaceholders.getIfPresent(placeholder) == null){
+            logger.warn("Invalid Placeholder detected!");
+            logger.warn("Placeholder: " + placeholder);
+            logger.warn(String.format("Cause:       " + cause, args));
+            
+            invalidPlaceholders.put(placeholder, System.currentTimeMillis());
+        }
+    }
+    
+    private boolean debugModeEnabled(){
+        Object debugMode = this.get("Debug", null);
+        if(debugMode == null)
+            return false;
+        
+        if(debugMode instanceof String)
+            return this.getString("Debug", "off").equalsIgnoreCase("on");
+        
+        if(debugMode instanceof Boolean)
+            return this.getBoolean("Debug", false);
+        
+        return false;
+    }
+    
+    private LoggerUtil loadLogger(){
+        if(NMSVersion.getVersion("v1_18_R1") != NMSVersion.UNKNOWN)
+            return new NativeLogger(this);
+        
+        return new LegacyLogger();
     }
 }

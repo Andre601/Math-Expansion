@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'ch.andre601'
-version '2.0.1'
+version '2.0.2'
 
 repositories {
     mavenCentral()
@@ -45,11 +45,9 @@ artifacts {
 }
 
 blossom {
-    replaceToken('VERSION', version)
+    replaceToken('VERSION', project.version)
 }
 
 shadowJar {
-    relocate('com.github.benmanes.caffeine.cache', 'ch.andre601.mathexpansion.depencencies.caffeine')
-    
-    archiveFileName = 'Math-Expansion-' + version + '.jar'
+    archiveFileName = 'Math-Expansion-' + project.version + '.jar'
 }

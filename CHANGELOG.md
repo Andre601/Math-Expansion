@@ -1,6 +1,9 @@
 # Changelog
 Below, you can find all releases of this expansion and their changes.
 
+## [2.0.2]
+- Fixed `Decimals` option not scaling just decimal points but the entire number and expressions.
+
 ## [2.0.1]
 - Added `Disable-Warnings` option.
   - When set to true, disables all printings of invalid Placeholder warnings. It's recommended to not enable this option.
@@ -121,3 +124,4 @@ This version still has `1.0.7` defined as expansion version. Please update to [t
 [1.4.1]: https://api.extendedclip.com/expansions/math/versions/math-141
 [2.0.0]: https://api.extendedclip.com/expansions/math/versions/math-200
 [2.0.1]: https://api.extendedclip.com/expansions/math/versions/math-201
+[2.0.2]: https://api.extendedclip.com/expansions/math/versions/math-202
