@@ -14,7 +14,7 @@
   <img alt="revolt" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@2/assets/minimal/social/revolt-singular_vector.svg" height="64" align="right">
 </a>
 
-> **Note**  
+> [!IMPORTANT]  
 > Versions 1.2.7 and newer require Java 11 or higher to work!  
 > This is due to some required dependencies needing it.
 
@@ -77,7 +77,7 @@ If you want to lower or increase the amount of decimals without altering the [co
 
 For example will `%math_5:_8+1.234567%` set the amount of decimals to 5, resulting in the returned number looking like this: `9.23457`
 
-> **Note**  
+> [!NOTE]  
 > The final number depends on what rounding behaviour has been set.
 
 ----
