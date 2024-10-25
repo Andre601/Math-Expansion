@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> Repository archived. The up-to-date source code, including Wiki, can be found on [Codeberg](https://codeberg.org/Andre601/Math-Expansion).
+
 [placeholderapi]: https://www.spigotmc.org/resources/6245/
 [evalex]: https://github.com/uklimaschewski/EvalEx
 [examples]: https://github.com/Andre601/Math-Expansion/wiki/Examples
